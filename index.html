@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>You're Enough — A Space Just For You</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #FDF6ED;
+      --warm-white: #FFFAF3;
+      --peach: #F4A96A;
+      --terracotta: #D96C3E;
+      --sage: #7DAA8A;
+      --soft-sage: #C8DBC7;
+      --lavender: #C5B8D8;
+      --mauve: #A08FB0;
+      --deep: #2E2217;
+      --mid: #6B5744;
+      --light-text: #9A7F6A;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--deep); overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 1.2rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(253,246,237,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(244,169,106,0.2);
+    }
+    .logo { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--terracotta); font-weight: 600; letter-spacing: -0.02em; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--mid); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--terracotta); }
+
+    /* PKENE BANNER */
+    .pkene-banner { background: var(--deep); padding: 1.4rem 2.5rem; border-bottom: 2px solid var(--peach); }
+    .pkene-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; gap: 1.2rem; }
+    .pkene-avatar { font-size: 2rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .pkene-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--peach); font-weight: 600; margin-bottom: 0.35rem; }
+    .pkene-msg { font-family: 'Fraunces', serif; font-style: italic; font-size: 0.98rem; color: rgba(253,246,237,0.88); line-height: 1.7; font-weight: 300; }
+
+    /* HERO */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 8rem 2rem 4rem; position: relative; overflow: hidden; }
+    .hero-blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.35; animation: float 8s ease-in-out infinite; }
+    .blob1 { width: 420px; height: 420px; background: var(--peach); top: -80px; left: -100px; }
+    .blob2 { width: 320px; height: 320px; background: var(--soft-sage); bottom: 40px; right: -60px; animation-delay: -3s; }
+    .blob3 { width: 260px; height: 260px; background: var(--lavender); top: 40%; left: 60%; animation-delay: -5s; }
+    @keyframes float { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.04); } }
+
+    .hero-tag { display: inline-block; background: var(--soft-sage); color: var(--sage); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 1.8rem; animation: fadeUp 0.8s ease both; }
+    .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 300; line-height: 1.1; color: var(--deep); max-width: 800px; animation: fadeUp 0.9s 0.1s ease both; }
+    .hero h1 em { font-style: italic; color: var(--terracotta); }
+    .hero-sub { margin-top: 1.5rem; font-size: 1.1rem; color: var(--mid); max-width: 520px; line-height: 1.7; font-weight: 300; animation: fadeUp 1s 0.2s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* TICKER */
+    .ticker-wrap { background: var(--terracotta); padding: 0.9rem 0; overflow: hidden; white-space: nowrap; }
+    .ticker { display: inline-flex; animation: ticker 28s linear infinite; }
+    .ticker span { color: #fff; font-size: 0.95rem; font-weight: 500; padding: 0 2.5rem; letter-spacing: 0.02em; }
+    .ticker span::before { content: "✦  "; opacity: 0.7; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* SECTIONS */
+    .section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--light-text); margin-bottom: 1rem; }
+    .section-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; line-height: 1.2; color: var(--deep); max-width: 540px; margin-bottom: 3.5rem; }
+    .section-title em { font-style: italic; color: var(--terracotta); }
+
+    /* PILLARS */
+    .pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .pillar-card { background: var(--warm-white); border-radius: 20px; padding: 2.2rem; border: 1px solid rgba(244,169,106,0.18); transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
+    .pillar-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; }
+    .pillar-card.green::before { background: var(--sage); }
+    .pillar-card.peach::before { background: var(--peach); }
+    .pillar-card.mauve::before { background: var(--mauve); }
+    .pillar-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(46,34,23,0.1); }
+    .pillar-icon { font-size: 2.2rem; margin-bottom: 1.2rem; display: block; }
+    .pillar-card h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 0.7rem; color: var(--deep); }
+    .pillar-card p { color: var(--mid); line-height: 1.7; font-size: 0.95rem; font-weight: 300; }
+
+    /* QUOTE */
+    .quote-section { background: var(--deep); padding: 6rem 2rem; text-align: center; }
+    .quote-inner { max-width: 700px; margin: 0 auto; }
+    .quote-mark { font-family: 'Fraunces', serif; font-size: 6rem; color: var(--peach); line-height: 0.5; opacity: 0.5; display: block; margin-bottom: 1.5rem; }
+    .quote-text { font-family: 'Fraunces', serif; font-size: clamp(1.5rem, 3.5vw, 2.4rem); font-weight: 300; font-style: italic; color: var(--cream); line-height: 1.5; }
+    .quote-attr { margin-top: 1.5rem; font-size: 0.85rem; color: var(--light-text); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* STORIES */
+    .stories-section { padding: 6rem 2rem; background: var(--soft-sage); }
+    .stories-inner { max-width: 1100px; margin: 0 auto; }
+    .stories-section .section-label, .stories-section .section-title { text-align: center; max-width: 100%; margin-left: auto; margin-right: auto; }
+    .stories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.4rem; }
+    .story-card { background: #fff; border-radius: 20px; padding: 2rem; box-shadow: 0 4px 20px rgba(46,34,23,0.07); transition: transform 0.3s, box-shadow 0.3s; }
+    .story-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(46,34,23,0.12); }
+    .story-bubble { font-family: 'Fraunces', serif; font-style: italic; font-size: 1rem; color: var(--deep); line-height: 1.7; font-weight: 300; margin-bottom: 1.4rem; padding-bottom: 1.4rem; border-bottom: 1px solid rgba(244,169,106,0.2); }
+    .story-bubble::before { content: '"'; font-size: 3rem; color: var(--peach); line-height: 0; vertical-align: -0.6rem; margin-right: 0.2rem; font-style: normal; opacity: 0.7; }
+    .story-footer { display: flex; align-items: center; gap: 0.8rem; }
+    .story-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .story-avatar.a { background: #FCE8D8; } .story-avatar.b { background: #D9EDD9; } .story-avatar.c { background: #E8E0F0; }
+    .story-avatar.d { background: #FDE8C8; } .story-avatar.e { background: #D8EAF5; } .story-avatar.f { background: #F5D8E8; }
+    .story-name { font-weight: 500; font-size: 0.88rem; color: var(--deep); }
+    .story-meta { font-size: 0.78rem; color: var(--light-text); font-weight: 300; }
+    .stories-note { text-align: center; margin-top: 2.5rem; font-size: 0.82rem; color: var(--mid); font-weight: 300; font-style: italic; }
+
+    /* MEMES */
+    .memes-section { padding: 6rem 2rem; background: var(--warm-white); }
+    .memes-inner { max-width: 1100px; margin: 0 auto; }
+    .memes-section .section-label, .memes-section .section-title { text-align: center; max-width: 100%; margin-left: auto; margin-right: auto; }
+    .memes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.4rem; }
+    .meme-card { border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,34,23,0.08); transition: transform 0.3s, box-shadow 0.3s; background: #fff; }
+    .meme-card:hover { transform: translateY(-5px) rotate(0.5deg); box-shadow: 0 16px 36px rgba(46,34,23,0.13); }
+    .meme-top { padding: 2rem 1.8rem 1rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .meme-emoji { font-size: 3.5rem; margin-bottom: 0.8rem; display: block; }
+    .meme-situation { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--light-text); font-weight: 500; margin-bottom: 0.6rem; }
+    .meme-top-text { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; color: var(--deep); line-height: 1.4; }
+    .meme-bottom { padding: 1rem 1.8rem 1.8rem; text-align: center; }
+    .meme-reaction { font-size: 1.1rem; font-weight: 700; font-family: 'Fraunces', serif; font-style: italic; line-height: 1.3; }
+    .meme-caption { margin-top: 0.5rem; font-size: 0.8rem; color: var(--light-text); font-weight: 300; }
+    .meme-card.yellow .meme-top { background: #FEF3C7; } .meme-card.yellow .meme-reaction { color: #B45309; }
+    .meme-card.green  .meme-top { background: #DCFCE7; } .meme-card.green  .meme-reaction { color: #166534; }
+    .meme-card.pink   .meme-top { background: #FCE7F3; } .meme-card.pink   .meme-reaction { color: #9D174D; }
+    .meme-card.blue   .meme-top { background: #DBEAFE; } .meme-card.blue   .meme-reaction { color: #1E40AF; }
+    .meme-card.orange .meme-top { background: #FFEDD5; } .meme-card.orange .meme-reaction { color: #C2410C; }
+    .meme-card.purple .meme-top { background: #EDE9FE; } .meme-card.purple .meme-reaction { color: #6D28D9; }
+
+    /* QUIZ */
+    .quiz-section { padding: 6rem 2rem; background: var(--deep); }
+    .quiz-inner { max-width: 680px; margin: 0 auto; text-align: center; }
+    .quiz-section .section-label { color: var(--peach); text-align: center; }
+    .quiz-section .section-title { color: var(--cream); max-width: 100%; text-align: center; margin: 0 auto 2.5rem; }
+    .quiz-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(244,169,106,0.2); border-radius: 24px; padding: 2.5rem 2rem; }
+    .quiz-question { font-family: 'Fraunces', serif; font-size: 1.25rem; font-style: italic; color: var(--cream); margin-bottom: 1.8rem; line-height: 1.5; min-height: 60px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem; }
+    .quiz-option { background: rgba(255,255,255,0.07); border: 1.5px solid rgba(244,169,106,0.2); color: var(--cream); border-radius: 12px; padding: 0.85rem 1.2rem; font-size: 0.95rem; font-family: 'DM Sans', sans-serif; cursor: pointer; text-align: left; transition: background 0.2s, border-color 0.2s, transform 0.15s; }
+    .quiz-option:hover { background: rgba(244,169,106,0.15); border-color: var(--peach); transform: translateX(4px); }
+    .quiz-option.selected { background: rgba(244,169,106,0.25); border-color: var(--peach); }
+    .quiz-result { display: none; background: linear-gradient(135deg, rgba(244,169,106,0.2), rgba(217,108,62,0.15)); border: 1px solid var(--peach); border-radius: 16px; padding: 1.5rem; margin-top: 1rem; }
+    .quiz-result.show { display: block; animation: fadeUp 0.5s ease both; }
+    .quiz-result-title { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--peach); font-weight: 600; margin-bottom: 0.5rem; }
+    .quiz-result-text { color: rgba(253,246,237,0.85); font-size: 0.92rem; line-height: 1.7; font-weight: 300; }
+    .quiz-progress { font-size: 0.75rem; color: var(--light-text); margin-bottom: 1.2rem; letter-spacing: 0.05em; }
+    .quiz-nav { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+    .btn-quiz { background: var(--terracotta); color: #fff; border: none; cursor: pointer; padding: 0.7rem 1.8rem; border-radius: 100px; font-size: 0.9rem; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: transform 0.2s, background 0.2s; }
+    .btn-quiz:hover { transform: translateY(-2px); background: #c05a2e; }
+    .btn-quiz.outline { background: transparent; border: 1.5px solid rgba(244,169,106,0.4); color: var(--peach); }
+    .btn-quiz.outline:hover { background: rgba(244,169,106,0.1); }
+
+    /* TIPS */
+    .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.2rem; }
+    .tip-item { background: var(--warm-white); border-radius: 16px; padding: 1.6rem; display: flex; gap: 1rem; align-items: flex-start; }
+    .tip-num { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--peach); font-weight: 600; line-height: 1; flex-shrink: 0; }
+    .tip-item h4 { font-weight: 500; margin-bottom: 0.3rem; font-size: 0.95rem; color: var(--deep); }
+    .tip-item p { font-size: 0.85rem; color: var(--mid); line-height: 1.6; font-weight: 300; }
+
+    /* CTA */
+    .cta-banner { background: linear-gradient(135deg, var(--peach), var(--terracotta)); padding: 5rem 2rem; text-align: center; }
+    .cta-banner h2 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); color: #fff; font-weight: 300; margin-bottom: 1rem; }
+    .cta-banner p { color: rgba(255,255,255,0.85); font-size: 1rem; font-weight: 300; }
+
+    /* FOOTER */
+    footer { background: var(--deep); padding: 2.5rem 2rem; text-align: center; }
+    footer p { color: var(--light-text); font-size: 0.85rem; }
+    footer .logo { font-size: 1.2rem; display: block; margin-bottom: 0.8rem; }
+
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.2rem; }
+      .nav-links { display: none; }
+      .hero { padding: 7rem 1.5rem 3rem; }
+      .pkene-banner { padding: 1.2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">you're enough.</div>
+    <ul class="nav-links">
+      <li><a href="#pillars">What We Cover</a></li>
+      <li><a href="#stories">Stories</a></li>
+      <li><a href="#memes">Vibes 😂</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+      <li><a href="#tips">Tips</a></li>
+    </ul>
+  </nav>
+
+  <!-- PKENE MESSAGE -->
+  <div class="pkene-banner">
+    <div class="pkene-inner">
+      <span class="pkene-avatar">✍🏾</span>
+      <div class="pkene-text">
+        <p class="pkene-label">A personal message from PKENE</p>
+        <p class="pkene-msg">Hey, I built this for you — yes, you. I know how heavy life can feel sometimes, especially when it seems like everyone else has it together. You are not alone, and you are not behind. This space is my way of saying: I see you, I care, and you've got this. No pressure, abeg. 💛</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-blob blob1"></div>
+    <div class="hero-blob blob2"></div>
+    <div class="hero-blob blob3"></div>
+    <span class="hero-tag">Your safe space, no dulling 💛</span>
+    <h1>Omo, you don't have to have it all <em>figured out.</em></h1>
+    <p class="hero-sub">Life is not a competition, abeg. Whether na school wahala, social media pressure, family expectations or just everyday life — this is your reminder: you are enough, exactly as you are. No pressure.</p>
+  </section>
+
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker">
+      <span>Your pace is the right pace</span>
+      <span>No pressure abeg</span>
+      <span>Rest is not giving up</span>
+      <span>You are allowed to be a work in progress</span>
+      <span>Grades don't define your worth</span>
+      <span>It's okay to say no</span>
+      <span>Your feelings are valid</span>
+      <span>Small steps still move you forward</span>
+      <span>Your pace is the right pace</span>
+      <span>No pressure abeg</span>
+      <span>Rest is not giving up</span>
+      <span>You are allowed to be a work in progress</span>
+      <span>Grades don't define your worth</span>
+      <span>It's okay to say no</span>
+      <span>Your feelings are valid</span>
+      <span>Small steps still move you forward</span>
+    </div>
+  </div>
+
+  <section id="pillars" class="section">
+    <p class="section-label">What we cover</p>
+    <h2 class="section-title">Pressure comes from <em>many places.</em> We address them all.</h2>
+    <div class="pillars">
+      <div class="pillar-card green">
+        <span class="pillar-icon">🧠</span>
+        <h3>Mental Health & Emotions</h3>
+        <p>Feeling anxious, overwhelmed, or just off? You're not alone. We talk about what's happening inside and help you process it without judgment.</p>
+      </div>
+      <div class="pillar-card peach">
+        <span class="pillar-icon">📚</span>
+        <h3>Academic & Career Pressure</h3>
+        <p>Exams, grades, "what's your plan?" — the pressure to succeed is real. We help you find balance and remind you success looks different for everyone.</p>
+      </div>
+      <div class="pillar-card mauve">
+        <span class="pillar-icon">📱</span>
+        <h3>Social Media & Comparison</h3>
+        <p>Scrolling through highlight reels can make your real life feel like not enough. Learn to consume social media without losing yourself in the comparison trap.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="quote-section">
+    <div class="quote-inner">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">Comparison is an act of violence against the self.</p>
+      <p class="quote-attr">— Iyanla Vanzant</p>
+    </div>
+  </div>
+
+  <section id="stories" class="stories-section">
+    <div class="stories-inner">
+      <p class="section-label">You're not alone</p>
+      <h2 class="section-title">Others have felt <em>exactly</em> this way.</h2>
+      <div class="stories-grid">
+        <div class="story-card">
+          <p class="story-bubble">Everyone around me seemed to have a plan — a course, a career, a passion. I had nothing. I felt broken for years before I realized most of them were just as lost.</p>
+          <div class="story-footer"><div class="story-avatar a">🌻</div><div><p class="story-name">Amara, 22</p><p class="story-meta">University student, Lagos</p></div></div>
+        </div>
+        <div class="story-card">
+          <p class="story-bubble">I used to compare my grades to my classmates every single day. It made me miserable. Stepping back from that was the best thing I ever did for myself.</p>
+          <div class="story-footer"><div class="story-avatar b">🌿</div><div><p class="story-name">Daniel, 19</p><p class="story-meta">High school senior, Abuja</p></div></div>
+        </div>
+        <div class="story-card">
+          <p class="story-bubble">Social media made me feel like I was always behind — in looks, in money, in life. Logging off for a week changed my whole perspective. I felt human again.</p>
+          <div class="story-footer"><div class="story-avatar c">🫐</div><div><p class="story-name">Zara, 20</p><p class="story-meta">Content creator, Lagos</p></div></div>
+        </div>
+        <div class="story-card">
+          <p class="story-bubble">My parents expected me to be a doctor. I wanted to paint. The guilt nearly swallowed me. Choosing myself felt selfish at first — now it feels like survival.</p>
+          <div class="story-footer"><div class="story-avatar d">🍊</div><div><p class="story-name">Kofi, 24</p><p class="story-meta">Art student, Port Harcourt</p></div></div>
+        </div>
+        <div class="story-card">
+          <p class="story-bubble">I cried during exam season and thought something was wrong with me. Turns out, feeling overwhelmed doesn't mean you're weak. It means you're human.</p>
+          <div class="story-footer"><div class="story-avatar e">💙</div><div><p class="story-name">Fatima, 21</p><p class="story-meta">Medical student, Abuja</p></div></div>
+        </div>
+        <div class="story-card">
+          <p class="story-bubble">I kept waiting to feel "ready" before I started anything. One day I realized ready never comes — you just start, and courage follows the action.</p>
+          <div class="story-footer"><div class="story-avatar f">🌸</div><div><p class="story-name">Chisom, 23</p><p class="story-meta">Entrepreneur, Enugu</p></div></div>
+        </div>
+      </div>
+      <p class="stories-note">Names and details are illustrative. These feelings are real — and shared by millions of young people every day.</p>
+    </div>
+  </section>
+
+  <section id="memes" class="memes-section">
+    <div class="memes-inner">
+      <p class="section-label">Too relatable 😂</p>
+      <h2 class="section-title">When life dey do <em>too much</em> — at least we laugh.</h2>
+      <div class="memes-grid">
+        <div class="meme-card yellow">
+          <div class="meme-top"><span class="meme-emoji">😰</span><p class="meme-situation">Exam season</p><p class="meme-top-text">Me: I'll start reading 2 weeks before exams.</p></div>
+          <div class="meme-bottom"><p class="meme-reaction">"Me the night before: Okay God, it's me and you."</p><p class="meme-caption">No be only you. We've all been there, abeg 😭</p></div>
+        </div>
+        <div class="meme-card green">
+          <div class="meme-top"><span class="meme-emoji">📱</span><p class="meme-situation">Instagram at 1am</p><p class="meme-top-text">See person wey you went school with just bought a car.</p></div>
+          <div class="meme-bottom"><p class="meme-reaction">"Omo. What am I even doing with my life?"</p><p class="meme-caption">Abeg, their highlight reel is not your full story 🙏</p></div>
+        </div>
+        <div class="meme-card pink">
+          <div class="meme-top"><span class="meme-emoji">👨‍👩‍👦</span><p class="meme-situation">Family gathering</p><p class="meme-top-text">Uncle: So what are you doing after school? You have a plan?</p></div>
+          <div class="meme-bottom"><p class="meme-reaction">"Me inside: Please somebody call me, say there's an emergency."</p><p class="meme-caption">You don't owe anyone a five-year plan at 20 😌</p></div>
+        </div>
+        <div class="meme-card blue">
+          <div class="meme-top"><span class="meme-emoji">😤</span><p class="meme-situation">Motivational content</p><p class="meme-top-text">App: "Successful people wake up at 4am!"</p></div>
+          <div class="meme-bottom"><p class="meme-reaction">"Me waking up at 9am feeling zero guilt: God abeg."</p><p class="meme-caption">Rest is not a crime. Your sleep is valid 😴</p></div>
+        </div>
+        <div class="meme-card orange">
+          <div class="meme-top"><span class="meme-emoji">🧑‍💻</span><p class="meme-situation">Job applications</p><p class="meme-top-text">Job: "Entry level. 5 years experience required."</p></div>
+          <div class="meme-bottom"><p class="meme-reaction">"Ahan! Make I born myself since 1999 go work?!"</p><p class="meme-caption">The system is mad. You are not the problem 💪</p></div>
+        </div>
+        <div class="meme-card purple">
+          <div class="meme-top"><span class="meme-emoji">🪞</span><p class="meme-situation">Monday morning</p><p class="meme-top-text">Me: This week I will be productive, eat well, exercise, sleep 8 hours.</p></div>
+          <div class="meme-bottom"><p class="meme-reaction">"Me by Wednesday: E don happen again."</p><p class="meme-caption">Small wins still count. Start again, no shame 🌱</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="quiz-section">
+    <div class="quiz-inner">
+      <p class="section-label">Fun & real 🎯</p>
+      <h2 class="section-title">What kind of pressure are you <em>carrying?</em></h2>
+      <div class="quiz-box">
+        <p class="quiz-progress" id="quiz-progress">Question 1 of 5</p>
+        <p class="quiz-question" id="quiz-question">Loading...</p>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-result" id="quiz-result">
+          <p class="quiz-result-title" id="result-title"></p>
+          <p class="quiz-result-text" id="result-text"></p>
+        </div>
+        <div class="quiz-nav">
+          <button class="btn-quiz outline" id="quiz-restart" onclick="restartQuiz()" style="display:none">Take it again 🔄</button>
+          <button class="btn-quiz" id="quiz-next" onclick="nextQuestion()">Next →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tips" class="section">
+    <p class="section-label">Practical tools</p>
+    <h2 class="section-title">Small things that <em>actually</em> help.</h2>
+    <div class="tips-grid">
+      <div class="tip-item"><span class="tip-num">01</span><div><h4>Name what you feel</h4><p>Putting a name on your emotion — "I feel anxious" — immediately reduces its power over you.</p></div></div>
+      <div class="tip-item"><span class="tip-num">02</span><div><h4>Unfollow to breathe</h4><p>It's okay to unfollow accounts that make you feel small. Curate your feed like it's your mental health.</p></div></div>
+      <div class="tip-item"><span class="tip-num">03</span><div><h4>Talk to someone</h4><p>A friend, a counselor, a parent — saying things out loud takes weight off your chest.</p></div></div>
+      <div class="tip-item"><span class="tip-num">04</span><div><h4>Rest without guilt</h4><p>Rest is productive. Your brain and body need downtime to function. Resting is not laziness.</p></div></div>
+      <div class="tip-item"><span class="tip-num">05</span><div><h4>Set your own bar</h4><p>Define success on your own terms, not the world's. What does "doing well" mean to you?</p></div></div>
+      <div class="tip-item"><span class="tip-num">06</span><div><h4>Celebrate small wins</h4><p>Got out of bed? Finished something small? That counts. Progress is progress, no matter the size.</p></div></div>
+    </div>
+  </section>
+
+  <div class="cta-banner">
+    <h2>You are more than your productivity.</h2>
+    <p>Save this page. Come back whenever the pressure gets loud. We'll be here.</p>
+  </div>
+
+  <footer>
+    <span class="logo">you're enough.</span>
+    <p>Built with love by <strong style="color: var(--peach);">PKENE</strong> — for every young person figuring it out. You've got this. 🌱</p>
+  </footer>
+
+  <script>
+    const questions = [
+      { q: "Omo, it's Sunday evening. What's going through your mind?", options: ["😰 'I haven't done anything this weekend. I'm finished.'", "📱 'Let me check what everyone else has been up to...'", "😴 'My body is tired but my brain won't let me rest.'", "🤷 'I honestly don't know what I'm doing with my life.'"], scores: ["academic", "social", "mental", "career"] },
+      { q: "Your friend just got a big achievement. Your first feeling?", options: ["😊 Happy for them, but then worried about my own progress.", "📉 Immediately compare it to where I am. E pain small.", "😶 Numb. I don't even know what I want anymore.", "💪 Motivated! But then anxious about how to catch up."], scores: ["academic", "social", "mental", "career"] },
+      { q: "When your parents ask 'what's your plan?', you feel:", options: ["😤 Frustrated. Like I haven't asked myself that 1000 times.", "😨 Panicked. Because honestly? I don't have one.", "😔 Ashamed. Like something is wrong with me.", "🙂 Fine, I have a plan — but it never feels 'good enough.'"], scores: ["mental", "career", "mental", "academic"] },
+      { q: "When you open social media, you mostly feel:", options: ["😩 Behind. Everyone is doing more than me.", "😐 Empty. I scroll but nothing makes me feel better.", "🔥 Inspired, but then overwhelmed trying to keep up.", "😂 Entertained! (But I'm avoiding something if I'm honest.)"], scores: ["social", "mental", "career", "social"] },
+      { q: "If you could tell yourself one thing right now, it would be:", options: ["📖 'Just focus. Stop distracting yourself.'", "🛌 'Rest. You are allowed to slow down.'", "💬 'Talk to someone. You don't have to carry this alone.'", "🌱 'Your path is yours. Stop comparing your chapter 1 to their chapter 10.'"], scores: ["academic", "mental", "mental", "social"] }
+    ];
+
+    const results = {
+      academic: { title: "📚 You're carrying Academic Pressure", text: "Omo, your brain dey work overtime! The pressure to perform, get good grades, and meet expectations is weighing on you. Here's the truth: your grades are not your worth. One exam does not define your future. Take it one step at a time — small wins add up to big victories. You've survived every hard day so far. That's a 100% record!" },
+      social:   { title: "📱 You're carrying Comparison Pressure", text: "Social media has you feeling like everyone else is ahead — their wins, their glow-ups, their milestones. But abeg, remember: you're watching their highlight reel, not their full story. People only post the wins, not the 2am crying sessions. Your pace is valid. Your journey is uniquely yours. No dulling!" },
+      mental:   { title: "🧠 You're carrying Emotional & Mental Pressure", text: "You're tired — not just physically, but deep inside. The feelings are heavy and sometimes you can't even name them. That's okay. Feeling overwhelmed doesn't mean you're broken, it means you're human. Please talk to someone you trust. Rest without guilt. You don't have to figure everything out today." },
+      career:   { title: "🌟 You're carrying Life Direction Pressure", text: "Everyone seems to know where they're going, and you're still figuring it out — and that's completely okay! Most people who look 'sorted' are winging it too, trust me. You don't need a five-year plan at 20. Start with what interests you today. Clarity comes with movement, not with waiting to feel 'ready.'" }
+    };
+
+    let current = 0, selectedScore = null;
+    let scoreboard = { academic: 0, social: 0, mental: 0, career: 0 };
+
+    function renderQuestion() {
+      const q = questions[current];
+      document.getElementById('quiz-progress').textContent = `Question ${current + 1} of ${questions.length}`;
+      document.getElementById('quiz-question').textContent = q.q;
+      document.getElementById('quiz-result').classList.remove('show');
+      document.getElementById('quiz-next').style.display = 'inline-block';
+      document.getElementById('quiz-restart').style.display = 'none';
+      selectedScore = null;
+      const container = document.getElementById('quiz-options');
+      container.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt;
+        btn.onclick = () => { document.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedScore = q.scores[i]; };
+        container.appendChild(btn);
+      });
+    }
+
+    function nextQuestion() {
+      if (!selectedScore) { document.getElementById('quiz-question').style.color = 'var(--peach)'; setTimeout(() => document.getElementById('quiz-question').style.color = '', 600); return; }
+      scoreboard[selectedScore]++;
+      current++;
+      current < questions.length ? renderQuestion() : showResult();
+    }
+
+    function showResult() {
+      const top = Object.entries(scoreboard).sort((a,b) => b[1]-a[1])[0][0];
+      const res = results[top];
+      document.getElementById('quiz-options').innerHTML = '';
+      document.getElementById('quiz-question').textContent = "Your result is ready! 🎉";
+      document.getElementById('quiz-progress').textContent = "Done! ✅";
+      document.getElementById('result-title').textContent = res.title;
+      document.getElementById('result-text').textContent = res.text;
+      document.getElementById('quiz-result').classList.add('show');
+      document.getElementById('quiz-next').style.display = 'none';
+      document.getElementById('quiz-restart').style.display = 'inline-block';
+    }
+
+    function restartQuiz() { current = 0; scoreboard = { academic: 0, social: 0, mental: 0, career: 0 }; selectedScore = null; renderQuestion(); }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
