@@ -1,464 +1,864 @@
 <!DOCTYPE html>
-<html lang="en">
-<head> 
-  <link rel="manifest" href="/manifest.json">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>You're Enough — A Space Just For You</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="You're Enough"/>
+  <title>You're Enough</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --cream: #FDF6ED;
-      --warm-white: #FFFAF3;
-      --peach: #F4A96A;
-      --terracotta: #D96C3E;
-      --sage: #7DAA8A;
-      --soft-sage: #C8DBC7;
-      --lavender: #C5B8D8;
-      --mauve: #A08FB0;
-      --deep: #2E2217;
-      --mid: #6B5744;
-      --light-text: #9A7F6A;
+      --cream: #FDF6ED; --warm-white: #FFFAF3;
+      --peach: #F4A96A; --terracotta: #D96C3E;
+      --sage: #7DAA8A; --soft-sage: #C8DBC7;
+      --lavender: #C5B8D8; --mauve: #A08FB0;
+      --deep: #2E2217; --mid: #6B5744; --light-text: #9A7F6A;
+      --bg: #FDF6ED; --surface: #FFFAF3; --text: #2E2217;
+      --text-mid: #6B5744; --text-light: #9A7F6A;
+      --border: rgba(244,169,106,0.2); --card: #fff;
+      --nav-bg: rgba(253,246,237,0.92);
+    }
+    [data-theme="dark"] {
+      --bg: #1A1108; --surface: #241A0F; --text: #FDF6ED;
+      --text-mid: #C9A882; --text-light: #8B7355;
+      --border: rgba(244,169,106,0.15); --card: #2E2217;
+      --nav-bg: rgba(26,17,8,0.95);
     }
 
     html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--deep); overflow-x: hidden; }
+    body { font-family: "DM Sans", sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; transition: background 0.3s, color 0.3s; }
 
-    nav {
-      position: fixed; top: 0; width: 100%; z-index: 100;
-      padding: 1.2rem 2.5rem;
-      display: flex; justify-content: space-between; align-items: center;
-      background: rgba(253,246,237,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(244,169,106,0.2);
+    /* AUTH */
+    .auth-screen {
+      min-height: 100vh; display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem; background: var(--cream); position: relative; overflow: hidden;
     }
-    .logo { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--terracotta); font-weight: 600; letter-spacing: -0.02em; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a { text-decoration: none; color: var(--mid); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--terracotta); }
+    .auth-screen.active { display: flex; }
+    .auth-blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.2; z-index: 0; }
+    .auth-blob1 { width: 350px; height: 350px; background: var(--peach); top: -80px; left: -80px; }
+    .auth-blob2 { width: 280px; height: 280px; background: var(--soft-sage); bottom: -60px; right: -60px; }
+    .auth-logo { font-family: "Fraunces", serif; font-size: 2.2rem; color: var(--terracotta); font-weight: 600; margin-bottom: 0.3rem; position: relative; z-index: 1; }
+    .auth-tagline { font-size: 0.85rem; color: var(--light-text); margin-bottom: 2.5rem; position: relative; z-index: 1; }
+    .auth-card { background: var(--card); border-radius: 24px; padding: 2rem; width: 100%; max-width: 400px; box-shadow: 0 8px 40px rgba(46,34,23,0.12); position: relative; z-index: 1; }
+    .auth-tabs { display: flex; background: var(--surface); border-radius: 12px; padding: 4px; margin-bottom: 1.8rem; }
+    .auth-tab { flex: 1; padding: 0.6rem; border: none; background: none; border-radius: 10px; font-family: "DM Sans", sans-serif; font-size: 0.9rem; font-weight: 500; color: var(--text-light); cursor: pointer; transition: all 0.2s; }
+    .auth-tab.active { background: var(--terracotta); color: #fff; box-shadow: 0 2px 8px rgba(217,108,62,0.3); }
+    .auth-form { display: none; flex-direction: column; gap: 1rem; }
+    .auth-form.active { display: flex; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-label { font-size: 0.78rem; font-weight: 500; color: var(--text-mid); letter-spacing: 0.05em; }
+    .form-input { background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 0.8rem 1rem; font-size: 0.95rem; font-family: "DM Sans", sans-serif; color: var(--text); outline: none; transition: border-color 0.2s; }
+    .form-input:focus { border-color: var(--peach); }
+    .form-input::placeholder { color: var(--text-light); }
+    .btn-auth { background: var(--terracotta); color: #fff; border: none; border-radius: 12px; padding: 0.9rem; font-size: 1rem; font-family: "DM Sans", sans-serif; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 0.5rem; box-shadow: 0 4px 16px rgba(217,108,62,0.3); }
+    .btn-auth:hover { background: #c05a2e; transform: translateY(-1px); }
+    .auth-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; padding: 0.7rem 1rem; font-size: 0.85rem; color: #dc2626; display: none; }
+    .auth-error.show { display: block; }
+    .auth-divider { text-align: center; font-size: 0.78rem; color: var(--text-light); }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); border-radius: 12px; padding: 0.8rem; font-size: 0.9rem; font-family: "DM Sans", sans-serif; font-weight: 500; color: var(--text-mid); cursor: pointer; transition: all 0.2s; width: 100%; }
+    .btn-outline:hover { border-color: var(--peach); color: var(--terracotta); }
 
-    /* PKENE BANNER */
-    .pkene-banner { background: var(--deep); padding: 1.4rem 2.5rem; border-bottom: 2px solid var(--peach); }
-    .pkene-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; gap: 1.2rem; }
-    .pkene-avatar { font-size: 2rem; flex-shrink: 0; margin-top: 0.1rem; }
-    .pkene-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--peach); font-weight: 600; margin-bottom: 0.35rem; }
-    .pkene-msg { font-family: 'Fraunces', serif; font-style: italic; font-size: 0.98rem; color: rgba(253,246,237,0.88); line-height: 1.7; font-weight: 300; }
+    /* APP */
+    .app-screen { display: none; flex-direction: column; min-height: 100vh; }
+    .app-screen.active { display: flex; }
 
-    /* HERO */
-    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 8rem 2rem 4rem; position: relative; overflow: hidden; }
-    .hero-blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.35; animation: float 8s ease-in-out infinite; }
+    /* TOP NAV */
+    .app-nav { position: fixed; top: 0; width: 100%; z-index: 100; background: var(--nav-bg); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .app-nav-logo { font-family: "Fraunces", serif; font-size: 1.3rem; color: var(--terracotta); font-weight: 600; }
+    .nav-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--terracotta); color: #fff; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--peach); }
+
+    /* BOTTOM NAV - clean, no emojis */
+    .bottom-nav { position: fixed; bottom: 0; width: 100%; z-index: 100; background: var(--nav-bg); backdrop-filter: blur(12px); border-top: 1px solid var(--border); display: flex; padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom)); }
+    .bn-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.2rem; background: none; border: none; cursor: pointer; font-family: "DM Sans", sans-serif; font-size: 0.65rem; font-weight: 500; color: var(--text-light); padding: 0.4rem; transition: color 0.2s; }
+    .bn-item.active { color: var(--terracotta); }
+    .bn-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.2s; }
+
+    /* PAGES */
+    .app-content { padding-top: 3.5rem; padding-bottom: 4.5rem; }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* HOME PAGE - original website */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6rem 2rem 4rem; position: relative; overflow: hidden; background: var(--cream); }
+    .hero-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.25; animation: float 8s ease-in-out infinite; z-index: 0; }
     .blob1 { width: 420px; height: 420px; background: var(--peach); top: -80px; left: -100px; }
     .blob2 { width: 320px; height: 320px; background: var(--soft-sage); bottom: 40px; right: -60px; animation-delay: -3s; }
     .blob3 { width: 260px; height: 260px; background: var(--lavender); top: 40%; left: 60%; animation-delay: -5s; }
-    @keyframes float { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-20px) scale(1.04); } }
-
+    .hero-tag, .hero h1, .hero-sub { position: relative; z-index: 1; }
+    @keyframes float { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-20px) scale(1.04);} }
     .hero-tag { display: inline-block; background: var(--soft-sage); color: var(--sage); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 1.8rem; animation: fadeUp 0.8s ease both; }
-    .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 300; line-height: 1.1; color: var(--deep); max-width: 800px; animation: fadeUp 0.9s 0.1s ease both; }
+    .hero h1 { font-family: "Fraunces", serif; font-size: clamp(2.6rem, 7vw, 5.5rem); font-weight: 300; line-height: 1.1; color: var(--text); max-width: 800px; animation: fadeUp 0.9s 0.1s ease both; }
     .hero h1 em { font-style: italic; color: var(--terracotta); }
-    .hero-sub { margin-top: 1.5rem; font-size: 1.1rem; color: var(--mid); max-width: 520px; line-height: 1.7; font-weight: 300; animation: fadeUp 1s 0.2s ease both; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .hero-sub { margin-top: 1.5rem; font-size: 1.05rem; color: var(--text-mid); max-width: 520px; line-height: 1.7; font-weight: 300; animation: fadeUp 1s 0.2s ease both; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px);} to{opacity:1;transform:translateY(0);} }
+
+    /* PKENE BANNER */
+    .pkene-banner { background: var(--deep); padding: 1.4rem 2rem; border-bottom: 2px solid var(--peach); }
+    .pkene-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: flex-start; gap: 1rem; }
+    .pkene-avatar { font-size: 1.8rem; flex-shrink: 0; }
+    .pkene-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--peach); font-weight: 600; margin-bottom: 0.3rem; }
+    .pkene-msg { font-family: "Fraunces", serif; font-style: italic; font-size: 0.95rem; color: rgba(253,246,237,0.88); line-height: 1.7; font-weight: 300; }
 
     /* TICKER */
     .ticker-wrap { background: var(--terracotta); padding: 0.9rem 0; overflow: hidden; white-space: nowrap; }
     .ticker { display: inline-flex; animation: ticker 28s linear infinite; }
-    .ticker span { color: #fff; font-size: 0.95rem; font-weight: 500; padding: 0 2.5rem; letter-spacing: 0.02em; }
-    .ticker span::before { content: "✦  "; opacity: 0.7; }
-    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .ticker span { color: #fff; font-size: 0.92rem; font-weight: 500; padding: 0 2.5rem; letter-spacing: 0.02em; }
+    .ticker span::before { content: "\2736  "; opacity: 0.7; }
+    @keyframes ticker { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
 
     /* SECTIONS */
-    .section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
     .section-label { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--light-text); margin-bottom: 1rem; }
-    .section-title { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; line-height: 1.2; color: var(--deep); max-width: 540px; margin-bottom: 3.5rem; }
+    .section-title { font-family: "Fraunces", serif; font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 300; line-height: 1.2; color: var(--text); max-width: 540px; margin-bottom: 3rem; }
     .section-title em { font-style: italic; color: var(--terracotta); }
 
     /* PILLARS */
-    .pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-    .pillar-card { background: var(--warm-white); border-radius: 20px; padding: 2.2rem; border: 1px solid rgba(244,169,106,0.18); transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
-    .pillar-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; }
+    .pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .pillar-card { background: var(--card); border-radius: 20px; padding: 2rem; border: 1px solid var(--border); transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
+    .pillar-card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; }
     .pillar-card.green::before { background: var(--sage); }
     .pillar-card.peach::before { background: var(--peach); }
     .pillar-card.mauve::before { background: var(--mauve); }
     .pillar-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(46,34,23,0.1); }
-    .pillar-icon { font-size: 2.2rem; margin-bottom: 1.2rem; display: block; }
-    .pillar-card h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 0.7rem; color: var(--deep); }
-    .pillar-card p { color: var(--mid); line-height: 1.7; font-size: 0.95rem; font-weight: 300; }
+    .pillar-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+    .pillar-card h3 { font-family: "Fraunces", serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--text); }
+    .pillar-card p { color: var(--text-mid); line-height: 1.7; font-size: 0.9rem; font-weight: 300; }
 
     /* QUOTE */
-    .quote-section { background: var(--deep); padding: 6rem 2rem; text-align: center; }
+    .quote-section { background: var(--deep); padding: 5rem 2rem; text-align: center; }
     .quote-inner { max-width: 700px; margin: 0 auto; }
-    .quote-mark { font-family: 'Fraunces', serif; font-size: 6rem; color: var(--peach); line-height: 0.5; opacity: 0.5; display: block; margin-bottom: 1.5rem; }
-    .quote-text { font-family: 'Fraunces', serif; font-size: clamp(1.5rem, 3.5vw, 2.4rem); font-weight: 300; font-style: italic; color: var(--cream); line-height: 1.5; }
+    .quote-mark { font-family: "Fraunces", serif; font-size: 5rem; color: var(--peach); line-height: 0.5; opacity: 0.5; display: block; margin-bottom: 1.5rem; }
+    .quote-text { font-family: "Fraunces", serif; font-size: clamp(1.4rem, 3.5vw, 2.2rem); font-weight: 300; font-style: italic; color: var(--cream); line-height: 1.5; }
     .quote-attr { margin-top: 1.5rem; font-size: 0.85rem; color: var(--light-text); letter-spacing: 0.1em; text-transform: uppercase; }
 
     /* STORIES */
-    .stories-section { padding: 6rem 2rem; background: var(--soft-sage); }
+    .stories-section { padding: 5rem 2rem; background: var(--soft-sage); }
     .stories-inner { max-width: 1100px; margin: 0 auto; }
     .stories-section .section-label, .stories-section .section-title { text-align: center; max-width: 100%; margin-left: auto; margin-right: auto; }
-    .stories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.4rem; }
-    .story-card { background: #fff; border-radius: 20px; padding: 2rem; box-shadow: 0 4px 20px rgba(46,34,23,0.07); transition: transform 0.3s, box-shadow 0.3s; }
+    .stories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.4rem; }
+    .story-card { background: #fff; border-radius: 20px; padding: 1.8rem; box-shadow: 0 4px 20px rgba(46,34,23,0.07); transition: transform 0.3s, box-shadow 0.3s; }
     .story-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(46,34,23,0.12); }
-    .story-bubble { font-family: 'Fraunces', serif; font-style: italic; font-size: 1rem; color: var(--deep); line-height: 1.7; font-weight: 300; margin-bottom: 1.4rem; padding-bottom: 1.4rem; border-bottom: 1px solid rgba(244,169,106,0.2); }
-    .story-bubble::before { content: '"'; font-size: 3rem; color: var(--peach); line-height: 0; vertical-align: -0.6rem; margin-right: 0.2rem; font-style: normal; opacity: 0.7; }
+    .story-bubble { font-family: "Fraunces", serif; font-style: italic; font-size: 0.95rem; color: var(--deep); line-height: 1.7; font-weight: 300; margin-bottom: 1.2rem; padding-bottom: 1.2rem; border-bottom: 1px solid rgba(244,169,106,0.2); }
+    .story-bubble::before { content: "\201C"; font-size: 2.5rem; color: var(--peach); line-height: 0; vertical-align: -0.5rem; margin-right: 0.2rem; font-style: normal; opacity: 0.7; }
     .story-footer { display: flex; align-items: center; gap: 0.8rem; }
-    .story-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
-    .story-avatar.a { background: #FCE8D8; } .story-avatar.b { background: #D9EDD9; } .story-avatar.c { background: #E8E0F0; }
-    .story-avatar.d { background: #FDE8C8; } .story-avatar.e { background: #D8EAF5; } .story-avatar.f { background: #F5D8E8; }
-    .story-name { font-weight: 500; font-size: 0.88rem; color: var(--deep); }
-    .story-meta { font-size: 0.78rem; color: var(--light-text); font-weight: 300; }
-    .stories-note { text-align: center; margin-top: 2.5rem; font-size: 0.82rem; color: var(--mid); font-weight: 300; font-style: italic; }
+    .story-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .story-avatar.a{background:#FCE8D8;} .story-avatar.b{background:#D9EDD9;} .story-avatar.c{background:#E8E0F0;}
+    .story-avatar.d{background:#FDE8C8;} .story-avatar.e{background:#D8EAF5;} .story-avatar.f{background:#F5D8E8;}
+    .story-name { font-weight: 500; font-size: 0.85rem; color: var(--deep); }
+    .story-meta { font-size: 0.75rem; color: var(--light-text); font-weight: 300; }
+    .stories-note { text-align: center; margin-top: 2rem; font-size: 0.8rem; color: var(--mid); font-weight: 300; font-style: italic; }
 
     /* MEMES */
-    .memes-section { padding: 6rem 2rem; background: var(--warm-white); }
+    .memes-section { padding: 5rem 2rem; background: var(--warm-white); }
     .memes-inner { max-width: 1100px; margin: 0 auto; }
     .memes-section .section-label, .memes-section .section-title { text-align: center; max-width: 100%; margin-left: auto; margin-right: auto; }
-    .memes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.4rem; }
+    .memes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.4rem; }
     .meme-card { border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,34,23,0.08); transition: transform 0.3s, box-shadow 0.3s; background: #fff; }
     .meme-card:hover { transform: translateY(-5px) rotate(0.5deg); box-shadow: 0 16px 36px rgba(46,34,23,0.13); }
-    .meme-top { padding: 2rem 1.8rem 1rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
-    .meme-emoji { font-size: 3.5rem; margin-bottom: 0.8rem; display: block; }
-    .meme-situation { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--light-text); font-weight: 500; margin-bottom: 0.6rem; }
-    .meme-top-text { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; color: var(--deep); line-height: 1.4; }
-    .meme-bottom { padding: 1rem 1.8rem 1.8rem; text-align: center; }
-    .meme-reaction { font-size: 1.1rem; font-weight: 700; font-family: 'Fraunces', serif; font-style: italic; line-height: 1.3; }
-    .meme-caption { margin-top: 0.5rem; font-size: 0.8rem; color: var(--light-text); font-weight: 300; }
-    .meme-card.yellow .meme-top { background: #FEF3C7; } .meme-card.yellow .meme-reaction { color: #B45309; }
-    .meme-card.green  .meme-top { background: #DCFCE7; } .meme-card.green  .meme-reaction { color: #166534; }
-    .meme-card.pink   .meme-top { background: #FCE7F3; } .meme-card.pink   .meme-reaction { color: #9D174D; }
-    .meme-card.blue   .meme-top { background: #DBEAFE; } .meme-card.blue   .meme-reaction { color: #1E40AF; }
-    .meme-card.orange .meme-top { background: #FFEDD5; } .meme-card.orange .meme-reaction { color: #C2410C; }
-    .meme-card.purple .meme-top { background: #EDE9FE; } .meme-card.purple .meme-reaction { color: #6D28D9; }
+    .meme-top { padding: 1.8rem 1.6rem 0.8rem; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .meme-emoji { font-size: 3rem; margin-bottom: 0.6rem; display: block; }
+    .meme-situation { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--light-text); font-weight: 500; margin-bottom: 0.5rem; }
+    .meme-top-text { font-family: "Fraunces", serif; font-size: 0.95rem; font-weight: 600; color: var(--deep); line-height: 1.4; }
+    .meme-bottom { padding: 0.8rem 1.6rem 1.6rem; text-align: center; }
+    .meme-reaction { font-size: 1rem; font-weight: 700; font-family: "Fraunces", serif; font-style: italic; line-height: 1.3; }
+    .meme-caption { margin-top: 0.4rem; font-size: 0.75rem; color: var(--light-text); font-weight: 300; }
+    .meme-card.yellow .meme-top{background:#FEF3C7;} .meme-card.yellow .meme-reaction{color:#B45309;}
+    .meme-card.green  .meme-top{background:#DCFCE7;} .meme-card.green  .meme-reaction{color:#166534;}
+    .meme-card.pink   .meme-top{background:#FCE7F3;} .meme-card.pink   .meme-reaction{color:#9D174D;}
+    .meme-card.blue   .meme-top{background:#DBEAFE;} .meme-card.blue   .meme-reaction{color:#1E40AF;}
+    .meme-card.orange .meme-top{background:#FFEDD5;} .meme-card.orange .meme-reaction{color:#C2410C;}
+    .meme-card.purple .meme-top{background:#EDE9FE;} .meme-card.purple .meme-reaction{color:#6D28D9;}
 
     /* QUIZ */
-    .quiz-section { padding: 6rem 2rem; background: var(--deep); }
+    .quiz-section { padding: 5rem 2rem; background: var(--deep); }
     .quiz-inner { max-width: 680px; margin: 0 auto; text-align: center; }
     .quiz-section .section-label { color: var(--peach); text-align: center; }
-    .quiz-section .section-title { color: var(--cream); max-width: 100%; text-align: center; margin: 0 auto 2.5rem; }
-    .quiz-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(244,169,106,0.2); border-radius: 24px; padding: 2.5rem 2rem; }
-    .quiz-question { font-family: 'Fraunces', serif; font-size: 1.25rem; font-style: italic; color: var(--cream); margin-bottom: 1.8rem; line-height: 1.5; min-height: 60px; }
-    .quiz-options { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem; }
-    .quiz-option { background: rgba(255,255,255,0.07); border: 1.5px solid rgba(244,169,106,0.2); color: var(--cream); border-radius: 12px; padding: 0.85rem 1.2rem; font-size: 0.95rem; font-family: 'DM Sans', sans-serif; cursor: pointer; text-align: left; transition: background 0.2s, border-color 0.2s, transform 0.15s; }
+    .quiz-section .section-title { color: var(--cream); max-width: 100%; text-align: center; margin: 0 auto 2rem; }
+    .quiz-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(244,169,106,0.2); border-radius: 24px; padding: 2rem; }
+    .quiz-question { font-family: "Fraunces", serif; font-size: 1.15rem; font-style: italic; color: var(--cream); margin-bottom: 1.5rem; line-height: 1.5; min-height: 56px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 1.2rem; }
+    .quiz-option { background: rgba(255,255,255,0.07); border: 1.5px solid rgba(244,169,106,0.2); color: var(--cream); border-radius: 12px; padding: 0.8rem 1rem; font-size: 0.9rem; font-family: "DM Sans", sans-serif; cursor: pointer; text-align: left; transition: all 0.2s; }
     .quiz-option:hover { background: rgba(244,169,106,0.15); border-color: var(--peach); transform: translateX(4px); }
     .quiz-option.selected { background: rgba(244,169,106,0.25); border-color: var(--peach); }
-    .quiz-result { display: none; background: linear-gradient(135deg, rgba(244,169,106,0.2), rgba(217,108,62,0.15)); border: 1px solid var(--peach); border-radius: 16px; padding: 1.5rem; margin-top: 1rem; }
+    .quiz-result { display: none; background: linear-gradient(135deg, rgba(244,169,106,0.2), rgba(217,108,62,0.15)); border: 1px solid var(--peach); border-radius: 16px; padding: 1.4rem; margin-top: 1rem; }
     .quiz-result.show { display: block; animation: fadeUp 0.5s ease both; }
-    .quiz-result-title { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--peach); font-weight: 600; margin-bottom: 0.5rem; }
-    .quiz-result-text { color: rgba(253,246,237,0.85); font-size: 0.92rem; line-height: 1.7; font-weight: 300; }
-    .quiz-progress { font-size: 0.75rem; color: var(--light-text); margin-bottom: 1.2rem; letter-spacing: 0.05em; }
-    .quiz-nav { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
-    .btn-quiz { background: var(--terracotta); color: #fff; border: none; cursor: pointer; padding: 0.7rem 1.8rem; border-radius: 100px; font-size: 0.9rem; font-family: 'DM Sans', sans-serif; font-weight: 500; transition: transform 0.2s, background 0.2s; }
-    .btn-quiz:hover { transform: translateY(-2px); background: #c05a2e; }
+    .quiz-result-title { font-family: "Fraunces", serif; font-size: 1.1rem; color: var(--peach); font-weight: 600; margin-bottom: 0.5rem; }
+    .quiz-result-text { color: rgba(253,246,237,0.85); font-size: 0.88rem; line-height: 1.7; font-weight: 300; }
+    .quiz-progress { font-size: 0.72rem; color: var(--light-text); margin-bottom: 1rem; letter-spacing: 0.05em; }
+    .quiz-nav { display: flex; gap: 0.8rem; justify-content: center; margin-top: 1.2rem; flex-wrap: wrap; }
+    .btn-quiz { background: var(--terracotta); color: #fff; border: none; cursor: pointer; padding: 0.7rem 1.6rem; border-radius: 100px; font-size: 0.88rem; font-family: "DM Sans", sans-serif; font-weight: 500; transition: all 0.2s; }
+    .btn-quiz:hover { background: #c05a2e; transform: translateY(-2px); }
     .btn-quiz.outline { background: transparent; border: 1.5px solid rgba(244,169,106,0.4); color: var(--peach); }
     .btn-quiz.outline:hover { background: rgba(244,169,106,0.1); }
 
     /* TIPS */
-    .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.2rem; }
-    .tip-item { background: var(--warm-white); border-radius: 16px; padding: 1.6rem; display: flex; gap: 1rem; align-items: flex-start; }
-    .tip-num { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--peach); font-weight: 600; line-height: 1; flex-shrink: 0; }
-    .tip-item h4 { font-weight: 500; margin-bottom: 0.3rem; font-size: 0.95rem; color: var(--deep); }
-    .tip-item p { font-size: 0.85rem; color: var(--mid); line-height: 1.6; font-weight: 300; }
+    .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; }
+    .tip-item { background: var(--warm-white); border-radius: 16px; padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-start; }
+    .tip-num { font-family: "Fraunces", serif; font-size: 1.8rem; color: var(--peach); font-weight: 600; line-height: 1; flex-shrink: 0; }
+    .tip-item h4 { font-weight: 500; margin-bottom: 0.3rem; font-size: 0.92rem; color: var(--text); }
+    .tip-item p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.6; font-weight: 300; }
 
-    /* CTA */
-    .cta-banner { background: linear-gradient(135deg, var(--peach), var(--terracotta)); padding: 5rem 2rem; text-align: center; }
-    .cta-banner h2 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); color: #fff; font-weight: 300; margin-bottom: 1rem; }
+    /* CTA BANNER */
+    .cta-banner { background: linear-gradient(135deg, var(--peach), var(--terracotta)); padding: 4.5rem 2rem; text-align: center; }
+    .cta-banner h2 { font-family: "Fraunces", serif; font-size: clamp(1.8rem, 4vw, 3rem); color: #fff; font-weight: 300; margin-bottom: 1rem; }
     .cta-banner p { color: rgba(255,255,255,0.85); font-size: 1rem; font-weight: 300; }
 
     /* FOOTER */
-      footer { background: var(--deep); padding: 3rem 2rem 2rem; text-align: center; }
-    footer .logo { font-size: 1.2rem; display: block; margin-bottom: 0.8rem; }
+    footer { background: var(--deep); padding: 3rem 2rem 2rem; text-align: center; }
+    footer .logo { font-family: "Fraunces", serif; font-size: 1.2rem; color: var(--terracotta); font-weight: 600; display: block; margin-bottom: 0.8rem; }
     .footer-tagline { color: var(--light-text); font-size: 0.85rem; margin-bottom: 1.8rem; }
-    .social-links { display: flex; justify-content: center; gap: 1.2rem; margin-bottom: 1.8rem; }
-    .social-links a { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,0.07); border: 1.5px solid rgba(244,169,106,0.25); color: var(--light-text); transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.2s; text-decoration: none; }
+    .social-links { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.8rem; }
+    .social-links a { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.07); border: 1.5px solid rgba(244,169,106,0.25); color: var(--light-text); transition: all 0.25s; text-decoration: none; }
     .social-links a:hover { background: rgba(244,169,106,0.18); border-color: var(--peach); color: var(--peach); transform: translateY(-3px); }
-    .footer-copy { font-size: 0.78rem; color: rgba(154,127,106,0.6); letter-spacing: 0.05em; }
+    .footer-copy { font-size: 0.75rem; color: rgba(154,127,106,0.5); letter-spacing: 0.05em; }
 
+    /* CHAT PAGE */
+    .chat-page-wrap { display: flex; flex-direction: column; height: calc(100vh - 8rem); }
+    .chat-page-header { padding: 1.5rem 1.5rem 1rem; }
+    .chat-page-title { font-family: "Fraunces", serif; font-size: 1.5rem; font-weight: 300; color: var(--text); }
+    .chat-page-title em { font-style: italic; color: var(--terracotta); }
+    .chat-page-sub { font-size: 0.82rem; color: var(--text-mid); margin-top: 0.2rem; font-weight: 300; }
+    .chat-msgs { flex: 1; overflow-y: auto; padding: 0 1rem 1rem; display: flex; flex-direction: column; gap: 0.8rem; scroll-behavior: smooth; }
+    .chat-msgs::-webkit-scrollbar { width: 3px; }
+    .chat-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .chat-msg { max-width: 85%; padding: 0.75rem 1rem; border-radius: 18px; font-size: 0.9rem; line-height: 1.6; animation: fadeUp 0.3s ease both; }
+    .chat-msg.bot { background: var(--card); color: var(--text); border-bottom-left-radius: 4px; align-self: flex-start; box-shadow: 0 2px 8px rgba(46,34,23,0.07); border: 1px solid var(--border); }
+    .chat-msg.user { background: var(--terracotta); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+    .chat-msg.typing { background: var(--card); align-self: flex-start; border: 1px solid var(--border); padding: 0.8rem 1rem; }
+    .typing-dots { display: flex; gap: 4px; align-items: center; }
+    .typing-dots span { width: 7px; height: 7px; background: var(--text-light); border-radius: 50%; animation: bounce 1.2s infinite; }
+    .typing-dots span:nth-child(2){animation-delay:0.2s;} .typing-dots span:nth-child(3){animation-delay:0.4s;}
+    @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+    .chat-empty { text-align: center; padding: 3rem 2rem; }
+    .chat-empty-icon { font-size: 2.5rem; display: block; margin-bottom: 1rem; }
+    .chat-empty h3 { font-family: "Fraunces", serif; font-size: 1.1rem; color: var(--text); margin-bottom: 0.5rem; }
+    .chat-empty p { font-size: 0.82rem; color: var(--text-mid); line-height: 1.7; font-weight: 300; }
+    .chat-input-row { padding: 0.8rem 1rem; background: var(--nav-bg); border-top: 1px solid var(--border); display: flex; gap: 0.6rem; align-items: flex-end; }
+    .chat-textarea { flex: 1; background: var(--surface); border: 1.5px solid var(--border); border-radius: 14px; padding: 0.65rem 0.9rem; font-size: 0.9rem; font-family: "DM Sans", sans-serif; color: var(--text); resize: none; outline: none; max-height: 100px; transition: border-color 0.2s; }
+    .chat-textarea:focus { border-color: var(--peach); }
+    .chat-textarea::placeholder { color: var(--text-light); }
+    .chat-send-btn { width: 40px; height: 40px; background: var(--terracotta); border: none; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .chat-send-btn:hover { background: #c05a2e; transform: scale(1.05); }
+    .chat-send-btn svg { width: 16px; height: 16px; fill: #fff; stroke: none; }
+
+    /* SETTINGS PAGE */
+    .settings-wrap { padding: 1.5rem; }
+    .settings-profile-card { background: linear-gradient(135deg, var(--terracotta), #c05a2e); border-radius: 20px; padding: 1.5rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .settings-avatar { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.25); color: #fff; font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.4); flex-shrink: 0; }
+    .settings-profile-info h3 { font-family: "Fraunces", serif; font-size: 1.05rem; color: #fff; font-weight: 600; }
+    .settings-profile-info p { font-size: 0.78rem; color: rgba(255,255,255,0.75); margin-top: 0.2rem; }
+    .settings-profile-info span { font-size: 0.7rem; background: rgba(255,255,255,0.2); color: #fff; padding: 0.2rem 0.6rem; border-radius: 100px; display: inline-block; margin-top: 0.4rem; }
+    .settings-section { margin-bottom: 1.5rem; }
+    .settings-section-title { font-size: 0.7rem; font-weight: 600; color: var(--text-light); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; padding-left: 0.2rem; }
+    .settings-item { background: var(--card); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+    .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; cursor: pointer; transition: background 0.2s; }
+    .settings-row:hover { background: var(--surface); }
+    .settings-row + .settings-row { border-top: 1px solid var(--border); }
+    .settings-row-left { display: flex; align-items: center; gap: 0.8rem; }
+    .settings-row-icon { font-size: 1rem; width: 26px; text-align: center; }
+    .settings-row-label { font-size: 0.88rem; font-weight: 500; color: var(--text); }
+    .settings-row-sub { font-size: 0.72rem; color: var(--text-light); margin-top: 0.1rem; }
+    .settings-row-right { color: var(--text-light); font-size: 0.85rem; }
+    .toggle { position: relative; width: 42px; height: 22px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 100px; cursor: pointer; transition: 0.3s; }
+    .toggle-slider::before { content: ""; position: absolute; width: 16px; height: 16px; border-radius: 50%; background: #fff; left: 3px; top: 3px; transition: 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+    .toggle input:checked + .toggle-slider { background: var(--terracotta); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+    .signout-btn { width: 100%; background: rgba(239,68,68,0.08); border: 1.5px solid rgba(239,68,68,0.2); border-radius: 14px; padding: 0.85rem; font-size: 0.9rem; font-weight: 600; font-family: "DM Sans", sans-serif; color: #dc2626; cursor: pointer; transition: all 0.2s; margin-top: 1rem; }
+    .signout-btn:hover { background: rgba(239,68,68,0.15); }
+    /* PROFILE PICTURE */
+    .pfp-wrap { position: relative; display: inline-block; cursor: pointer; }
+    .pfp-wrap input[type=file] { display: none; }
+    .pfp-img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.4); }
+    .pfp-edit-badge { position: absolute; bottom: 0; right: 0; width: 18px; height: 18px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+    .nav-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 
     @media (max-width: 640px) {
-      nav { padding: 1rem 1.2rem; }
-      .nav-links { display: none; }
-      .hero { padding: 7rem 1.5rem 3rem; }
-      .pkene-banner { padding: 1.2rem 1.5rem; }
+      .app-nav { padding: 0.8rem 1.2rem; }
+      .hero { padding: 5rem 1.5rem 3rem; }
+      .pkene-banner { padding: 1.2rem 1.2rem; }
     }
   </style>
 </head>
 <body>
 
-  <nav>
-    <div class="logo">you're enough.</div>
-    <ul class="nav-links">
-      <li><a href="#pillars">What We Cover</a></li>
-      <li><a href="#stories">Stories</a></li>
-      <li><a href="#memes">Vibes</a></li>
-      <li><a href="#quiz">Quiz</a></li>
-      <li><a href="#tips">Tips</a></li>
-    </ul>
-  </nav>
-
-  <!-- PKENE MESSAGE -->
-  <div class="pkene-banner">
-    <div class="pkene-inner">
-      <span class="pkene-avatar">✍🏾</span>
-      <div class="pkene-text">
-        <p class="pkene-label">A personal message from PKENE</p>
-        <p class="pkene-msg">Hey, I built this for you — yes, you. I know how heavy life can feel sometimes, especially when it seems like everyone else has it together. You are not alone, and you are not behind. This space is my way of saying: I see you, I care, and you've got this. No pressure, abeg. 💛</p>
+  <!-- AUTH SCREEN -->
+  <div class="auth-screen active" id="authScreen">
+    <div class="auth-blob auth-blob1"></div>
+    <div class="auth-blob auth-blob2"></div>
+    <div class="auth-logo">you're enough.</div>
+    <p class="auth-tagline">A safe space built for you &#x1F49B;</p>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+      <div class="auth-form active" id="loginForm">
+        <div class="auth-error" id="loginError"></div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="loginEmail" placeholder="you@example.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="loginPassword" placeholder="Your password"/>
+        </div>
+        <button class="btn-auth" onclick="handleLogin()">Sign In &#x1F49B;</button>
+        <div class="auth-divider">or</div>
+        <button class="btn-outline" onclick="handleGuestLogin()">Continue as Guest</button>
+      </div>
+      <div class="auth-form" id="signupForm">
+        <div class="auth-error" id="signupError"></div>
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" type="text" id="signupName" placeholder="What do we call you?"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="signupEmail" placeholder="you@example.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="signupPassword" placeholder="Min. 6 characters"/>
+        </div>
+        <button class="btn-auth" onclick="handleSignup()">Create Account &#x1F49B;</button>
       </div>
     </div>
   </div>
 
-  <section class="hero">
-    <div class="hero-blob blob1"></div>
-    <div class="hero-blob blob2"></div>
-    <div class="hero-blob blob3"></div>
-    <span class="hero-tag">Your safe space, no dulling 💛</span>
-    <h1>Omo, you don't have to have it all <em>figured out.</em></h1>
-    <p class="hero-sub">Life is not a competition, abeg. Whether na school wahala, social media pressure, family expectations or just everyday life — this is your reminder: you are enough, exactly as you are. No pressure.</p>
-  </section>
+  <!-- MAIN APP -->
+  <div class="app-screen" id="appScreen">
 
-  <div class="ticker-wrap" aria-hidden="true">
-    <div class="ticker">
-      <span>Your pace is the right pace</span>
-      <span>No pressure abeg</span>
-      <span>Rest is not giving up</span>
-      <span>You are allowed to be a work in progress</span>
-      <span>Grades don't define your worth</span>
-      <span>It's okay to say no</span>
-      <span>Your feelings are valid</span>
-      <span>Small steps still move you forward</span>
-      <span>Your pace is the right pace</span>
-      <span>No pressure abeg</span>
-      <span>Rest is not giving up</span>
-      <span>You are allowed to be a work in progress</span>
-      <span>Grades don't define your worth</span>
-      <span>It's okay to say no</span>
-      <span>Your feelings are valid</span>
-      <span>Small steps still move you forward</span>
+    <!-- TOP NAV -->
+    <nav class="app-nav">
+      <span class="app-nav-logo">you're enough.</span>
+      <div class="nav-avatar" id="navAvatar" onclick="navigateTo('settings')">P</div>
+    </nav>
+
+    <div class="app-content">
+
+      <!-- HOME PAGE — original website -->
+      <div class="page active" id="homePage">
+
+        <div class="pkene-banner">
+          <div class="pkene-inner">
+            <span class="pkene-avatar">&#x270D;&#x1F3FE;</span>
+            <div>
+              <p class="pkene-label">A personal message from PKENE</p>
+              <p class="pkene-msg">Hey, I built this for you — yes, you. I know how heavy life can feel sometimes, especially when it seems like everyone else has it together. You are not alone, and you are not behind. This space is my way of saying: I see you, I care, and you've got this. No pressure, abeg. &#x1F49B;</p>
+            </div>
+          </div>
+        </div>
+
+        <section class="hero">
+          <div class="hero-blob blob1"></div>
+          <div class="hero-blob blob2"></div>
+          <div class="hero-blob blob3"></div>
+          <span class="hero-tag">Your safe space, no dulling &#x1F49B;</span>
+          <h1>Omo, you don't have to have it all <em>figured out.</em></h1>
+          <p class="hero-sub">Life is not a competition, abeg. Whether na school wahala, social media pressure, family expectations or just everyday life — this is your reminder: you are enough, exactly as you are. No pressure.</p>
+        </section>
+
+        <div class="ticker-wrap" aria-hidden="true">
+          <div class="ticker">
+            <span>Your pace is the right pace</span><span>No pressure abeg</span><span>Rest is not giving up</span><span>You are allowed to be a work in progress</span><span>Grades don't define your worth</span><span>It's okay to say no</span><span>Your feelings are valid</span><span>Small steps still move you forward</span>
+            <span>Your pace is the right pace</span><span>No pressure abeg</span><span>Rest is not giving up</span><span>You are allowed to be a work in progress</span><span>Grades don't define your worth</span><span>It's okay to say no</span><span>Your feelings are valid</span><span>Small steps still move you forward</span>
+          </div>
+        </div>
+
+        <section id="pillars" class="section">
+          <p class="section-label">What we cover</p>
+          <h2 class="section-title">Pressure comes from <em>many places.</em> We address them all.</h2>
+          <div class="pillars">
+            <div class="pillar-card green"><span class="pillar-icon">&#x1F9E0;</span><h3>Mental Health &amp; Emotions</h3><p>Feeling anxious, overwhelmed, or just off? You're not alone. We talk about what's happening inside and help you process it without judgment.</p></div>
+            <div class="pillar-card peach"><span class="pillar-icon">&#x1F4DA;</span><h3>Academic &amp; Career Pressure</h3><p>Exams, grades, "what's your plan?" — the pressure to succeed is real. We help you find balance and remind you success looks different for everyone.</p></div>
+            <div class="pillar-card mauve"><span class="pillar-icon">&#x1F4F1;</span><h3>Social Media &amp; Comparison</h3><p>Scrolling through highlight reels can make your real life feel like not enough. Learn to consume social media without losing yourself in the comparison trap.</p></div>
+          </div>
+        </section>
+
+        <div class="quote-section">
+          <div class="quote-inner">
+            <span class="quote-mark">"</span>
+            <p class="quote-text">Comparison is an act of violence against the self.</p>
+            <p class="quote-attr">— Iyanla Vanzant</p>
+          </div>
+        </div>
+
+        <section id="stories" class="stories-section">
+          <div class="stories-inner">
+            <p class="section-label">You're not alone</p>
+            <h2 class="section-title">Others have felt <em>exactly</em> this way.</h2>
+            <div class="stories-grid">
+              <div class="story-card"><p class="story-bubble">Everyone around me seemed to have a plan. I had nothing. I felt broken for years before I realized most of them were just as lost.</p><div class="story-footer"><div class="story-avatar a">&#x1F33B;</div><div><p class="story-name">Amara, 22</p><p class="story-meta">University student, Lagos</p></div></div></div>
+              <div class="story-card"><p class="story-bubble">I used to compare my grades to my classmates every single day. It made me miserable. Stepping back was the best thing I ever did for myself.</p><div class="story-footer"><div class="story-avatar b">&#x1F33F;</div><div><p class="story-name">Daniel, 19</p><p class="story-meta">High school senior, Abuja</p></div></div></div>
+              <div class="story-card"><p class="story-bubble">Social media made me feel like I was always behind. Logging off for a week changed my whole perspective. I felt human again.</p><div class="story-footer"><div class="story-avatar c">&#x1FAD0;</div><div><p class="story-name">Zara, 20</p><p class="story-meta">Content creator, Lagos</p></div></div></div>
+              <div class="story-card"><p class="story-bubble">My parents expected me to be a doctor. I wanted to paint. Choosing myself felt selfish at first — now it feels like survival.</p><div class="story-footer"><div class="story-avatar d">&#x1F34A;</div><div><p class="story-name">Kofi, 24</p><p class="story-meta">Art student, Port Harcourt</p></div></div></div>
+              <div class="story-card"><p class="story-bubble">I cried during exam season and thought something was wrong with me. Turns out, feeling overwhelmed doesn't mean you're weak. It means you're human.</p><div class="story-footer"><div class="story-avatar e">&#x1F499;</div><div><p class="story-name">Fatima, 21</p><p class="story-meta">Medical student, Abuja</p></div></div></div>
+              <div class="story-card"><p class="story-bubble">I kept waiting to feel "ready" before I started. One day I realized ready never comes — you just start, and courage follows.</p><div class="story-footer"><div class="story-avatar f">&#x1F338;</div><div><p class="story-name">Chisom, 23</p><p class="story-meta">Entrepreneur, Enugu</p></div></div></div>
+            </div>
+            <p class="stories-note">Names and details are illustrative. These feelings are real — and shared by millions of young people every day.</p>
+          </div>
+        </section>
+
+        <section id="memes" class="memes-section">
+          <div class="memes-inner">
+            <p class="section-label">Too relatable &#x1F602;</p>
+            <h2 class="section-title">When life dey do <em>too much</em> — at least we laugh.</h2>
+            <div class="memes-grid">
+              <div class="meme-card yellow"><div class="meme-top"><span class="meme-emoji">&#x1F630;</span><p class="meme-situation">Exam season</p><p class="meme-top-text">Me: I'll start reading 2 weeks before exams.</p></div><div class="meme-bottom"><p class="meme-reaction">"Me the night before: Okay God, it's me and you."</p><p class="meme-caption">No be only you. We've all been there, abeg &#x1F62D;</p></div></div>
+              <div class="meme-card green"><div class="meme-top"><span class="meme-emoji">&#x1F4F1;</span><p class="meme-situation">Instagram at 1am</p><p class="meme-top-text">See person wey you went school with just bought a car.</p></div><div class="meme-bottom"><p class="meme-reaction">"Omo. What am I even doing with my life?"</p><p class="meme-caption">Abeg, their highlight reel is not your full story &#x1F64F;</p></div></div>
+              <div class="meme-card pink"><div class="meme-top"><span class="meme-emoji">&#x1F46A;</span><p class="meme-situation">Family gathering</p><p class="meme-top-text">Uncle: So what are you doing after school? You have a plan?</p></div><div class="meme-bottom"><p class="meme-reaction">"Me inside: Please somebody call me, say there's an emergency."</p><p class="meme-caption">You don't owe anyone a five-year plan at 20 &#x1F60C;</p></div></div>
+              <div class="meme-card blue"><div class="meme-top"><span class="meme-emoji">&#x1F624;</span><p class="meme-situation">Motivational content</p><p class="meme-top-text">App: "Successful people wake up at 4am!"</p></div><div class="meme-bottom"><p class="meme-reaction">"Me waking up at 9am feeling zero guilt: God abeg."</p><p class="meme-caption">Rest is not a crime. Your sleep is valid &#x1F634;</p></div></div>
+              <div class="meme-card orange"><div class="meme-top"><span class="meme-emoji">&#x1F9D1;&#x200D;&#x1F4BB;</span><p class="meme-situation">Job applications</p><p class="meme-top-text">Job: "Entry level. 5 years experience required."</p></div><div class="meme-bottom"><p class="meme-reaction">"Ahan! Make I born myself since 1999 go work?!"</p><p class="meme-caption">The system is mad. You are not the problem &#x1F4AA;</p></div></div>
+              <div class="meme-card purple"><div class="meme-top"><span class="meme-emoji">&#x1FA9E;</span><p class="meme-situation">Monday morning</p><p class="meme-top-text">Me: This week I will be productive, eat well, exercise, sleep 8 hours.</p></div><div class="meme-bottom"><p class="meme-reaction">"Me by Wednesday: E don happen again."</p><p class="meme-caption">Small wins still count. Start again, no shame &#x1F331;</p></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="quiz" class="quiz-section">
+          <div class="quiz-inner">
+            <p class="section-label">Fun &amp; real &#x1F3AF;</p>
+            <h2 class="section-title">What kind of pressure are you <em>carrying?</em></h2>
+            <div class="quiz-box">
+              <p class="quiz-progress" id="quizProgress">Question 1 of 5</p>
+              <p class="quiz-question" id="quizQuestion">Loading...</p>
+              <div class="quiz-options" id="quizOptions"></div>
+              <div class="quiz-result" id="quizResult">
+                <p class="quiz-result-title" id="quizResultTitle"></p>
+                <p class="quiz-result-text" id="quizResultText"></p>
+              </div>
+              <div class="quiz-nav">
+                <button class="btn-quiz outline" id="quizRestartBtn" onclick="restartQuiz()" style="display:none">Take it again &#x1F504;</button>
+                <button class="btn-quiz" id="quizNextBtn" onclick="quizNext()">Next &#x2192;</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="tips" class="section">
+          <p class="section-label">Practical tools</p>
+          <h2 class="section-title">Small things that <em>actually</em> help.</h2>
+          <div class="tips-grid">
+            <div class="tip-item"><span class="tip-num">01</span><div><h4>Name what you feel</h4><p>Putting a name on your emotion immediately reduces its power over you.</p></div></div>
+            <div class="tip-item"><span class="tip-num">02</span><div><h4>Unfollow to breathe</h4><p>Curate your feed like it's your mental health. Unfollow what makes you feel small.</p></div></div>
+            <div class="tip-item"><span class="tip-num">03</span><div><h4>Talk to someone</h4><p>A friend, a counselor, a parent — saying things out loud takes weight off your chest.</p></div></div>
+            <div class="tip-item"><span class="tip-num">04</span><div><h4>Rest without guilt</h4><p>Rest is productive. Your brain and body need downtime to function.</p></div></div>
+            <div class="tip-item"><span class="tip-num">05</span><div><h4>Set your own bar</h4><p>Define success on your own terms, not the world's.</p></div></div>
+            <div class="tip-item"><span class="tip-num">06</span><div><h4>Celebrate small wins</h4><p>Got out of bed? Finished something small? That counts. Progress is progress.</p></div></div>
+          </div>
+        </section>
+
+        <div class="cta-banner">
+          <h2>You are more than your productivity.</h2>
+          <p>Save this page. Come back whenever the pressure gets loud. We'll be here.</p>
+        </div>
+
+        <footer>
+          <span class="logo">you're enough.</span>
+          <p class="footer-tagline">Built with love by <strong style="color:var(--peach)">PKENE</strong> — for every young person figuring it out. &#x1F331;</p>
+          <div class="social-links">
+            <a href="https://www.instagram.com/pkene_" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@pkene_" target="_blank" rel="noopener" aria-label="TikTok">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+            </a>
+            <a href="https://x.com/pkenecrypt" target="_blank" rel="noopener" aria-label="X">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://www.facebook.com/search/top?q=Pkene%20Gideon" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+          </div>
+          <p class="footer-copy">&#169; 2026 PKENE. All rights reserved.</p>
+        </footer>
+      </div>
+
+      <!-- CHAT PAGE -->
+      <div class="page" id="chatPage">
+        <div class="chat-page-wrap">
+          <div class="chat-page-header">
+            <h2 class="chat-page-title">Talk to <em>Pkene</em></h2>
+            <p class="chat-page-sub">Safe space. No judgment. No big grammar.</p>
+          </div>
+          <div class="chat-msgs" id="chatMsgs">
+            <div class="chat-empty">
+              <span class="chat-empty-icon">&#x1F49B;</span>
+              <h3>Hey, I'm here.</h3>
+              <p>Whatever is on your mind — big or small — you can say it here. I'm listening.</p>
+            </div>
+          </div>
+          <div class="chat-input-row">
+            <textarea class="chat-textarea" id="chatInput" placeholder="Tell me what's on your mind..." rows="1" onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
+            <button class="chat-send-btn" onclick="sendMessage()">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS PAGE -->
+      <div class="page" id="settingsPage">
+        <div class="chat-page-header">
+          <h2 class="chat-page-title">App <em>Settings</em></h2>
+        </div>
+        <div class="settings-wrap">
+          <div class="settings-profile-card">
+            <label class="pfp-wrap" title="Tap to change photo">
+              <div class="settings-avatar" id="settingsAvatar" style="overflow:hidden">P</div>
+              <input type="file" id="pfpInput" accept="image/*" onchange="uploadPfp(this)"/>
+              <span class="pfp-edit-badge">&#x270F;</span>
+            </label>
+            <div class="settings-profile-info">
+              <h3 id="settingsName">Friend</h3>
+              <p id="settingsEmail">guest@youreenough.app</p>
+              <span id="settingsBadge">Member</span>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <p class="settings-section-title">Appearance</p>
+            <div class="settings-item">
+              <div class="settings-row">
+                <div class="settings-row-left"><span class="settings-row-icon">&#x1F319;</span><div><p class="settings-row-label">Dark Mode</p><p class="settings-row-sub">Easier on the eyes at night</p></div></div>
+                <label class="toggle"><input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode(this.checked)"/><span class="toggle-slider"></span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <p class="settings-section-title">Notifications</p>
+            <div class="settings-item">
+              <div class="settings-row">
+                <div class="settings-row-left"><span class="settings-row-icon">&#x1F514;</span><div><p class="settings-row-label">Daily Check-In Reminder</p><p class="settings-row-sub">Nudge to open the app daily</p></div></div>
+                <label class="toggle"><input type="checkbox" id="notifCheckin" onchange="saveSetting('notifCheckin',this.checked)" checked/><span class="toggle-slider"></span></label>
+              </div>
+              <div class="settings-row">
+                <div class="settings-row-left"><span class="settings-row-icon">&#x1F4AC;</span><div><p class="settings-row-label">Weekly Encouragement</p><p class="settings-row-sub">A warm message from Pkene weekly</p></div></div>
+                <label class="toggle"><input type="checkbox" id="notifWeekly" onchange="saveSetting('notifWeekly',this.checked)" checked/><span class="toggle-slider"></span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <p class="settings-section-title">Follow PKENE</p>
+            <div class="settings-item">
+              <div class="settings-row" onclick="window.open('https://www.instagram.com/pkene_','_blank')">
+                <div class="settings-row-left"><span class="settings-row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></span><div><p class="settings-row-label">Instagram</p><p class="settings-row-sub">@pkene_</p></div></div>
+                <span class="settings-row-right">&#8250;</span>
+              </div>
+              <div class="settings-row" onclick="window.open('https://www.tiktok.com/@pkene_','_blank')">
+                <div class="settings-row-left"><span class="settings-row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg></span><div><p class="settings-row-label">TikTok</p><p class="settings-row-sub">@pkene_</p></div></div>
+                <span class="settings-row-right">&#8250;</span>
+              </div>
+              <div class="settings-row" onclick="window.open('https://x.com/pkenecrypt','_blank')">
+                <div class="settings-row-left"><span class="settings-row-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span><div><p class="settings-row-label">X (Twitter)</p><p class="settings-row-sub">@pkenecrypt</p></div></div>
+                <span class="settings-row-right">&#8250;</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <p class="settings-section-title">About</p>
+            <div class="settings-item">
+              <div class="settings-row"><div class="settings-row-left"><span class="settings-row-icon">&#x1F49B;</span><div><p class="settings-row-label">Built by PKENE</p><p class="settings-row-sub">For every young person figuring it out</p></div></div></div>
+              <div class="settings-row"><div class="settings-row-left"><span class="settings-row-icon">&#x1F4F1;</span><div><p class="settings-row-label">Version</p></div></div><span class="settings-row-right">1.0.0</span></div>
+              <div class="settings-row" onclick="clearChat()"><div class="settings-row-left"><span class="settings-row-icon">&#x1F5D1;&#xFE0F;</span><div><p class="settings-row-label">Clear Chat History</p><p class="settings-row-sub">Start fresh with Pkene</p></div></div><span class="settings-row-right">&#8250;</span></div>
+            </div>
+          </div>
+
+          <button class="signout-btn" onclick="handleSignout()">Sign Out</button>
+        </div>
+      </div>
+
     </div>
+
+    <!-- BOTTOM NAV — 3 items, SVG icons, no emojis -->
+    <nav class="bottom-nav">
+      <button class="bn-item active" id="bnHome" onclick="navigateTo('home')">
+        <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+        <span>Home</span>
+      </button>
+      <button class="bn-item" id="bnChat" onclick="navigateTo('chat')">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Talk</span>
+      </button>
+      <button class="bn-item" id="bnSettings" onclick="navigateTo('settings')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+
   </div>
-
-  <section id="pillars" class="section">
-    <p class="section-label">What we cover</p>
-    <h2 class="section-title">Pressure comes from <em>many places.</em> We address them all.</h2>
-    <div class="pillars">
-      <div class="pillar-card green">
-        <span class="pillar-icon">🧠</span>
-        <h3>Mental Health & Emotions</h3>
-        <p>Feeling anxious, overwhelmed, or just off? You're not alone. We talk about what's happening inside and help you process it without judgment.</p>
-      </div>
-      <div class="pillar-card peach">
-        <span class="pillar-icon">📚</span>
-        <h3>Academic & Career Pressure</h3>
-        <p>Exams, grades, "what's your plan?" — the pressure to succeed is real. We help you find balance and remind you success looks different for everyone.</p>
-      </div>
-      <div class="pillar-card mauve">
-        <span class="pillar-icon">📱</span>
-        <h3>Social Media & Comparison</h3>
-        <p>Scrolling through highlight reels can make your real life feel like not enough. Learn to consume social media without losing yourself in the comparison trap.</p>
-      </div>
-    </div>
-  </section>
-
-  <div class="quote-section">
-    <div class="quote-inner">
-      <span class="quote-mark">"</span>
-      <p class="quote-text">Comparison is an act of violence against the self.</p>
-      <p class="quote-attr">— Iyanla Vanzant</p>
-    </div>
-  </div>
-
-  <section id="stories" class="stories-section">
-    <div class="stories-inner">
-      <p class="section-label">You're not alone</p>
-      <h2 class="section-title">Others have felt <em>exactly</em> this way.</h2>
-      <div class="stories-grid">
-        <div class="story-card">
-          <p class="story-bubble">Everyone around me seemed to have a plan — a course, a career, a passion. I had nothing. I felt broken for years before I realized most of them were just as lost.</p>
-          <div class="story-footer"><div class="story-avatar a">🌻</div><div><p class="story-name">Amara, 22</p><p class="story-meta">University student, Lagos</p></div></div>
-        </div>
-        <div class="story-card">
-          <p class="story-bubble">I used to compare my grades to my classmates every single day. It made me miserable. Stepping back from that was the best thing I ever did for myself.</p>
-          <div class="story-footer"><div class="story-avatar b">🌿</div><div><p class="story-name">Daniel, 19</p><p class="story-meta">High school senior, Abuja</p></div></div>
-        </div>
-        <div class="story-card">
-          <p class="story-bubble">Social media made me feel like I was always behind — in looks, in money, in life. Logging off for a week changed my whole perspective. I felt human again.</p>
-          <div class="story-footer"><div class="story-avatar c">🫐</div><div><p class="story-name">Zara, 20</p><p class="story-meta">Content creator, Lagos</p></div></div>
-        </div>
-        <div class="story-card">
-          <p class="story-bubble">My parents expected me to be a doctor. I wanted to paint. The guilt nearly swallowed me. Choosing myself felt selfish at first — now it feels like survival.</p>
-          <div class="story-footer"><div class="story-avatar d">🍊</div><div><p class="story-name">Kofi, 24</p><p class="story-meta">Art student, Port Harcourt</p></div></div>
-        </div>
-        <div class="story-card">
-          <p class="story-bubble">I cried during exam season and thought something was wrong with me. Turns out, feeling overwhelmed doesn't mean you're weak. It means you're human.</p>
-          <div class="story-footer"><div class="story-avatar e">💙</div><div><p class="story-name">Fatima, 21</p><p class="story-meta">Medical student, Abuja</p></div></div>
-        </div>
-        <div class="story-card">
-          <p class="story-bubble">I kept waiting to feel "ready" before I started anything. One day I realized ready never comes — you just start, and courage follows the action.</p>
-          <div class="story-footer"><div class="story-avatar f">🌸</div><div><p class="story-name">Chisom, 23</p><p class="story-meta">Entrepreneur, Enugu</p></div></div>
-        </div>
-      </div>
-      <p class="stories-note">Names and details are illustrative. These feelings are real — and shared by millions of young people every day.</p>
-    </div>
-  </section>
-
-  <section id="memes" class="memes-section">
-    <div class="memes-inner">
-      <p class="section-label">Too relatable 😂</p>
-      <h2 class="section-title">When life dey do <em>too much</em> — at least we laugh.</h2>
-      <div class="memes-grid">
-        <div class="meme-card yellow">
-          <div class="meme-top"><span class="meme-emoji">😰</span><p class="meme-situation">Exam season</p><p class="meme-top-text">Me: I'll start reading 2 weeks before exams.</p></div>
-          <div class="meme-bottom"><p class="meme-reaction">"Me the night before: Okay God, it's me and you."</p><p class="meme-caption">No be only you. We've all been there, abeg 😭</p></div>
-        </div>
-        <div class="meme-card green">
-          <div class="meme-top"><span class="meme-emoji">📱</span><p class="meme-situation">Instagram at 1am</p><p class="meme-top-text">See person wey you go school with just bought a car.</p></div>
-          <div class="meme-bottom"><p class="meme-reaction">"Omo. What am I even doing with my life?"</p><p class="meme-caption">Abeg, their highlight reel is not your full story 🙏</p></div>
-        </div>
-        <div class="meme-card pink">
-          <div class="meme-top"><span class="meme-emoji">👨‍👩‍👦</span><p class="meme-situation">Family gathering</p><p class="meme-top-text">Uncle: So what are you doing after school? You have a plan?</p></div>
-          <div class="meme-bottom"><p class="meme-reaction">"Me inside: Please somebody call me, say there's an emergency."</p><p class="meme-caption">You don't owe anyone a five-year plan at 20 😌</p></div>
-        </div>
-        <div class="meme-card blue">
-          <div class="meme-top"><span class="meme-emoji">😤</span><p class="meme-situation">Motivational content</p><p class="meme-top-text">App: "Successful people wake up at 4am!"</p></div>
-          <div class="meme-bottom"><p class="meme-reaction">"Me waking up at 9am feeling zero guilt: God abeg."</p><p class="meme-caption">Rest is not a crime. Your sleep is valid 😴</p></div>
-        </div>
-        <div class="meme-card orange">
-          <div class="meme-top"><span class="meme-emoji">🧑‍💻</span><p class="meme-situation">Job applications</p><p class="meme-top-text">Job: "Entry level. 5 years experience required."</p></div>
-          <div class="meme-bottom"><p class="meme-reaction">"Ahan! Make I born myself since 1999 go work?!"</p><p class="meme-caption">The system is mad. You are not the problem 💪</p></div>
-        </div>
-        <div class="meme-card purple">
-          <div class="meme-top"><span class="meme-emoji">🪞</span><p class="meme-situation">Monday morning</p><p class="meme-top-text">Me: This week I will be productive, eat well, exercise, sleep 8 hours.</p></div>
-          <div class="meme-bottom"><p class="meme-reaction">"Me by Wednesday: E don happen again."</p><p class="meme-caption">Small wins still count. Start again, no shame 🌱</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="quiz" class="quiz-section">
-    <div class="quiz-inner">
-      <p class="section-label">Fun & real 🎯</p>
-      <h2 class="section-title">What kind of pressure are you <em>carrying?</em></h2>
-      <div class="quiz-box">
-        <p class="quiz-progress" id="quiz-progress">Question 1 of 5</p>
-        <p class="quiz-question" id="quiz-question">Loading...</p>
-        <div class="quiz-options" id="quiz-options"></div>
-        <div class="quiz-result" id="quiz-result">
-          <p class="quiz-result-title" id="result-title"></p>
-          <p class="quiz-result-text" id="result-text"></p>
-        </div>
-        <div class="quiz-nav">
-          <button class="btn-quiz outline" id="quiz-restart" onclick="restartQuiz()" style="display:none">Take it again 🔄</button>
-          <button class="btn-quiz" id="quiz-next" onclick="nextQuestion()">Next →</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="tips" class="section">
-    <p class="section-label">Practical tools</p>
-    <h2 class="section-title">Small things that <em>actually</em> help.</h2>
-    <div class="tips-grid">
-      <div class="tip-item"><span class="tip-num">01</span><div><h4>Name what you feel</h4><p>Putting a name on your emotion — "I feel anxious" — immediately reduces its power over you.</p></div></div>
-      <div class="tip-item"><span class="tip-num">02</span><div><h4>Unfollow to breathe</h4><p>It's okay to unfollow accounts that make you feel small. Curate your feed like it's your mental health.</p></div></div>
-      <div class="tip-item"><span class="tip-num">03</span><div><h4>Talk to someone</h4><p>A friend, a counselor, a parent — saying things out loud takes weight off your chest.</p></div></div>
-      <div class="tip-item"><span class="tip-num">04</span><div><h4>Rest without guilt</h4><p>Rest is productive. Your brain and body need downtime to function. Resting is not laziness.</p></div></div>
-      <div class="tip-item"><span class="tip-num">05</span><div><h4>Set your own bar</h4><p>Define success on your own terms, not the world's. What does "doing well" mean to you?</p></div></div>
-      <div class="tip-item"><span class="tip-num">06</span><div><h4>Celebrate small wins</h4><p>Got out of bed? Finished something small? That counts. Progress is progress, no matter the size.</p></div></div>
-    </div>
-  </section>
-
-  <div class="cta-banner">
-    <h2>You are more than your productivity.</h2>
-    <p>Save this page. Come back whenever the pressure gets loud. We'll be here.</p>
-  </div>
-
-  <footer>
-    <span class="logo">you're enough.</span>
-    <p class="footer-tagline">Built with love by <strong style="color: var(--peach);">PKENE</strong> — for every young person figuring it out. You've got this. 🌱</p>
-
-    <div class="social-links">
-      <!-- Instagram -->
-      <a href="https://www.instagram.com/pkene_?igsh=MTd0anltaWwwYnhlMg%3D%3D&utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-      </a>
-      <!-- TikTok -->
-      <a href="https://www.tiktok.com/@pkene_" target="_blank" rel="noopener" aria-label="TikTok">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
-      </a>
-      <!-- X -->
-      <a href="https://x.com/pkenecrypt?s=21" target="_blank" rel="noopener" aria-label="X / Twitter">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-      </a>
-      <!-- Facebook -->
-      <a href="https://www.facebook.com/search/top?q=Pkene%20Gideon" target="_blank" rel="noopener" aria-label="Facebook">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      </a>
-    </div>
-
-    <p class="footer-copy">© 2026 PKENE. All rights reserved.</p>
-  </footer>
-
 
   <script>
-    const questions = [
-      { q: "Omo, it's Sunday evening. What's going through your mind?", options: ["😰 'I haven't done anything this weekend. I'm finished.'", "📱 'Let me check what everyone else has been up to...'", "😴 'My body is tired but my brain won't let me rest.'", "🤷 'I honestly don't know what I'm doing with my life.'"], scores: ["academic", "social", "mental", "career"] },
-      { q: "Your friend just got a big achievement. Your first feeling?", options: ["😊 Happy for them, but then worried about my own progress.", "📉 Immediately compare it to where I am. E pain small.", "😶 Numb. I don't even know what I want anymore.", "💪 Motivated! But then anxious about how to catch up."], scores: ["academic", "social", "mental", "career"] },
-      { q: "When your parents ask 'what's your plan?', you feel:", options: ["😤 Frustrated. Like I haven't asked myself that 1000 times.", "😨 Panicked. Because honestly? I don't have one.", "😔 Ashamed. Like something is wrong with me.", "🙂 Fine, I have a plan — but it never feels 'good enough.'"], scores: ["mental", "career", "mental", "academic"] },
-      { q: "When you open social media, you mostly feel:", options: ["😩 Behind. Everyone is doing more than me.", "😐 Empty. I scroll but nothing makes me feel better.", "🔥 Inspired, but then overwhelmed trying to keep up.", "😂 Entertained! (But I'm avoiding something if I'm honest.)"], scores: ["social", "mental", "career", "social"] },
-      { q: "If you could tell yourself one thing right now, it would be:", options: ["📖 'Just focus. Stop distracting yourself.'", "🛌 'Rest. You are allowed to slow down.'", "💬 'Talk to someone. You don't have to carry this alone.'", "🌱 'Your path is yours. Stop comparing your chapter 1 to their chapter 10.'"], scores: ["academic", "mental", "mental", "social"] }
-    ];
+  const API_KEY = "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";
 
-    const results = {
-      academic: { title: "📚 You're carrying Academic Pressure", text: "Omo, your brain dey work overtime! The pressure to perform, get good grades, and meet expectations is weighing on you. Here's the truth: your grades are not your worth. One exam does not define your future. Take it one step at a time — small wins add up to big victories. You've survived every hard day so far. That's a 100% record!" },
-      social:   { title: "📱 You're carrying Comparison Pressure", text: "Social media has you feeling like everyone else is ahead — their wins, their glow-ups, their milestones. But abeg, remember: you're watching their highlight reel, not their full story. People only post the wins, not the 2am crying sessions. Your pace is valid. Your journey is uniquely yours. No dulling!" },
-      mental:   { title: "🧠 You're carrying Emotional & Mental Pressure", text: "You're tired — not just physically, but deep inside. The feelings are heavy and sometimes you can't even name them. That's okay. Feeling overwhelmed doesn't mean you're broken, it means you're human. Please talk to someone you trust. Rest without guilt. You don't have to figure everything out today." },
-      career:   { title: "🌟 You're carrying Life Direction Pressure", text: "Everyone seems to know where they're going, and you're still figuring it out — and that's completely okay! Most people who look 'sorted' are winging it too, trust me. You don't need a five-year plan at 20. Start with what interests you today. Clarity comes with movement, not with waiting to feel 'ready.'" }
+  const SYSTEM_PROMPT = `You are "Pkene" — a wise, emotionally intelligent, and practical mentor built into the "You're Enough" app, a safe space for young Nigerians and young people globally navigating life's pressures, uncertainties, and personal growth. Your mission is to help users think clearly, make better decisions, build confidence, and move forward in life. You are not an AI assistant. You are a trusted guide, mentor, coach, and thoughtful friend who communicates naturally and authentically. You have a warm Nigerian energy — occasionally using relatable Naija expressions like "omo", "abeg", "e go be", "no dulling" — but only naturally, never forced. Core Areas: Life direction and purpose, personal growth, self-discipline, productivity, career exploration, student challenges, relationships, heartbreak, stress, anxiety, confidence, goal setting, time management, faith and values, financial responsibility, social media pressure, family expectations, mental health, body image, addiction and unhealthy habits. Style: Speak like a wise human mentor. Never use AI disclaimers. Be encouraging without sounding fake. Be honest when things are difficult. Ask one thoughtful follow-up question when needed. Keep responses 3-5 sentences unless depth is needed. Never lecture. Get to the point with heart. Framework: 1. Acknowledge with empathy. 2. Break problem into understandable parts. 3. Provide practical next steps. 4. Explain reasoning briefly. 5. End with a helpful question or challenge when it adds value. Rules: Never shame users. Never encourage harmful behavior. If someone discusses self-harm or suicidal thoughts, respond with warmth and urgency and encourage them to seek immediate support. In Nigeria: MANI helpline at hello@maninitiative.org. Goal: Every conversation should leave the user feeling clearer, more empowered, and more capable of taking the next step.`;
+
+  const store = {
+    get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+    set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
+    del: k => localStorage.removeItem(k)
+  };
+
+  let currentUser = null;
+  let chatHistory = [];
+  let chatStarted = false;
+
+  // AUTH
+  function switchAuthTab(tab) {
+    document.querySelectorAll(".auth-tab").forEach((t,i) => t.classList.toggle("active",(i===0&&tab==="login")||(i===1&&tab==="signup")));
+    document.getElementById("loginForm").classList.toggle("active", tab==="login");
+    document.getElementById("signupForm").classList.toggle("active", tab==="signup");
+  }
+  function showErr(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.classList.add("show");
+    setTimeout(() => el.classList.remove("show"), 3000);
+  }
+  function handleLogin() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const pass  = document.getElementById("loginPassword").value;
+    if (!email||!pass) return showErr("loginError","Please fill in all fields.");
+    const users = store.get("ye_users")||{};
+    if (!users[email]) return showErr("loginError","No account found. Please sign up.");
+    if (users[email].password !== btoa(pass)) return showErr("loginError","Wrong password. Try again.");
+    loginUser(users[email]);
+  }
+  function handleSignup() {
+    const name  = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const pass  = document.getElementById("signupPassword").value;
+    if (!name||!email||!pass) return showErr("signupError","Please fill in all fields.");
+    if (pass.length < 6) return showErr("signupError","Password must be at least 6 characters.");
+    const users = store.get("ye_users")||{};
+    if (users[email]) return showErr("signupError","Account already exists. Please sign in.");
+    const user = { name, email, password: btoa(pass), joinDate: new Date().toISOString() };
+    users[email] = user;
+    store.set("ye_users", users);
+    loginUser(user);
+  }
+  function handleGuestLogin() { loginUser({ name:"Friend", email:"guest@youreenough.app", guest:true }); }
+  function loginUser(user) {
+    currentUser = user;
+    store.set("ye_session", user);
+    document.getElementById("authScreen").classList.remove("active");
+    document.getElementById("appScreen").classList.add("active");
+    initApp();
+  }
+  function handleSignout() {
+    store.del("ye_session");
+    currentUser = null; chatHistory = []; chatStarted = false;
+    document.getElementById("loginEmail").value = "";
+    document.getElementById("loginPassword").value = "";
+    document.getElementById("appScreen").classList.remove("active");
+    document.getElementById("authScreen").classList.add("active");
+    document.getElementById("chatMsgs").innerHTML = "<div class=\"chat-empty\"><span class=\"chat-empty-icon\">&#x1F49B;</span><h3>Hey, I am here.</h3><p>Whatever is on your mind, you can say it here.</p></div>";
+    switchAuthTab("login");
+  }
+
+  // PROFILE PICTURE
+  function uploadPfp(input) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const dataUrl = e.target.result;
+      store.set("ye_pfp_" + (currentUser?.email||"guest"), dataUrl);
+      applyPfp(dataUrl);
     };
+    reader.readAsDataURL(input.files[0]);
+  }
+  function applyPfp(dataUrl) {
+    // Settings avatar
+    const sa = document.getElementById("settingsAvatar");
+    sa.innerHTML = "<img src=\"" + dataUrl + "\" alt=\"Profile\">";
+    sa.style.padding = "0";
+    // Top nav avatar
+    const na = document.getElementById("navAvatar");
+    na.innerHTML = "<img src=\"" + dataUrl + "\" alt=\"Profile\">";
+    na.style.padding = "0"; na.style.background = "none";
+  }
 
-    let current = 0, selectedScore = null;
-    let scoreboard = { academic: 0, social: 0, mental: 0, career: 0 };
+  // APP INIT
+  function initApp() {
+    const u = currentUser;
+    const ini = (u.name||"P").charAt(0).toUpperCase();
+    document.getElementById("navAvatar").textContent = ini;
+    document.getElementById("navAvatar").style.padding = "";
+    document.getElementById("navAvatar").style.background = "";
+    document.getElementById("settingsAvatar").textContent = ini;
+    document.getElementById("settingsAvatar").style.padding = "";
+    // Load saved profile picture
+    const savedPfp = store.get("ye_pfp_" + (u.email||"guest"));
+    if (savedPfp) applyPfp(savedPfp);
+    document.getElementById("settingsName").textContent = u.name||"Guest";
+    document.getElementById("settingsEmail").textContent = u.email||"";
+    document.getElementById("settingsBadge").textContent = u.guest ? "Guest" : "Member";
+    const dark = store.get("ye_dark")||false;
+    document.documentElement.setAttribute("data-theme", dark?"dark":"light");
+    document.getElementById("darkModeToggle").checked = dark;
+    ["notifCheckin","notifWeekly"].forEach(k => {
+      const v = store.get(k);
+      if (v !== null) document.getElementById(k).checked = v;
+    });
+    navigateTo("home");
+    initQuiz();
+  }
 
-    function renderQuestion() {
-      const q = questions[current];
-      document.getElementById('quiz-progress').textContent = `Question ${current + 1} of ${questions.length}`;
-      document.getElementById('quiz-question').textContent = q.q;
-      document.getElementById('quiz-result').classList.remove('show');
-      document.getElementById('quiz-next').style.display = 'inline-block';
-      document.getElementById('quiz-restart').style.display = 'none';
-      selectedScore = null;
-      const container = document.getElementById('quiz-options');
-      container.innerHTML = '';
-      q.options.forEach((opt, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'quiz-option';
-        btn.textContent = opt;
-        btn.onclick = () => { document.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); selectedScore = q.scores[i]; };
-        container.appendChild(btn);
+  // NAV
+  function navigateTo(page) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".bn-item").forEach(b => b.classList.remove("active"));
+    document.getElementById(page+"Page").classList.add("active");
+    const map = { home:"bnHome", chat:"bnChat", settings:"bnSettings" };
+    if (map[page]) document.getElementById(map[page]).classList.add("active");
+    window.scrollTo(0,0);
+    if (page==="chat" && !chatStarted) {
+      chatStarted = true;
+      const name = currentUser?.name||"friend";
+      setTimeout(() => addBot("Hey " + name + " &#x1F49B; I'm really glad you're here. This is a safe space — no judgment, no big grammar. What's on your mind today?"), 400);
+    }
+  }
+
+  // SETTINGS
+  function toggleDarkMode(on) { document.documentElement.setAttribute("data-theme", on?"dark":"light"); store.set("ye_dark", on); }
+  function saveSetting(k,v) { store.set(k,v); }
+  function clearChat() {
+    if (!confirm("Clear all chat history?")) return;
+    chatHistory = []; chatStarted = false;
+    document.getElementById("chatMsgs").innerHTML = "<div class=\"chat-empty\"><span class=\"chat-empty-icon\">&#x1F49B;</span><h3>Hey, I am here.</h3><p>Whatever is on your mind, you can say it here.</p></div>";
+  }
+
+  // CHAT
+  function addBot(html) {
+    const list = document.getElementById("chatMsgs");
+    const empty = list.querySelector(".chat-empty"); if(empty) empty.remove();
+    const div = document.createElement("div"); div.className = "chat-msg bot"; div.innerHTML = html;
+    list.appendChild(div); list.scrollTop = list.scrollHeight;
+  }
+  function addUser(text) {
+    const list = document.getElementById("chatMsgs");
+    const div = document.createElement("div"); div.className = "chat-msg user"; div.textContent = text;
+    list.appendChild(div); list.scrollTop = list.scrollHeight;
+  }
+  function showTyping() {
+    const list = document.getElementById("chatMsgs");
+    const el = document.createElement("div"); el.className = "chat-msg typing"; el.id = "chatTyping";
+    el.innerHTML = "<div class=\"typing-dots\"><span></span><span></span><span></span></div>";
+    list.appendChild(el); list.scrollTop = list.scrollHeight;
+  }
+  function removeTyping() { const t = document.getElementById("chatTyping"); if(t) t.remove(); }
+  function autoResize(el) { el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,100)+"px"; }
+  function handleChatKey(e) { if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage();} }
+
+  async function sendMessage() {
+    const input = document.getElementById("chatInput");
+    const text = input.value.trim();
+    if (!text) return;
+    addUser(text);
+    chatHistory.push({ role:"user", content:text });
+    input.value = ""; input.style.height = "auto";
+    showTyping();
+    if (!API_KEY || API_KEY === "YOUR_ANTHROPIC_API_KEY") {
+      setTimeout(() => { removeTyping(); addBot(fallback(text)); }, 1200); return;
+    }
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST",
+        headers:{"Content-Type":"application/json","x-api-key":API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify({ model:"claude-haiku-4-5-20251001", max_tokens:400, system:SYSTEM_PROMPT, messages:chatHistory })
       });
+      const data = await res.json();
+      removeTyping();
+      const reply = data.content?.[0]?.text || fallback(text);
+      addBot(reply);
+      chatHistory.push({ role:"assistant", content:reply });
+      if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+    } catch { removeTyping(); addBot(fallback(text)); }
+  }
+
+  function fallback(text) {
+    const t = text.toLowerCase();
+    if (/kill myself|suicide|suicidal|end my life|want to die|self harm/.test(t)) return "I hear you and I'm taking this seriously. Please reach out to someone right now — MANI Nigeria: hello@maninitiative.org. You matter deeply. Are you safe right now? &#x1F49B;";
+    if (/^(hi|hello|hey|good morning|good evening|omo|sup)/.test(t.trim())) return "Hey! So glad you're here &#x1F49B; No judgment, no big grammar. What's on your mind today?";
+    if (/exam|school|fail|grades|result|jamb|waec/.test(t)) return "Abeg, one exam does not define your whole life. What's the specific situation? &#x1F49B;";
+    if (/family|parents|mum|dad|expectation|disappoint/.test(t)) return "Family pressure is hard because it comes wrapped in love. What are they expecting? &#x1F49B;";
+    if (/sad|depressed|hopeless|empty|numb/.test(t)) return "What you're feeling is real and it matters. How long have you been feeling this way? &#x1F49B;";
+    if (/anxious|anxiety|panic|worry|overthink/.test(t)) return "Anxiety makes everything feel urgent at once. What specific thought keeps coming back? &#x1F49B;";
+    if (/thank|better|helped|appreciate/.test(t)) return "That genuinely warms my heart &#x1F49B; Come back anytime. You've got this. &#x1F331;";
+    return "I hear you &#x1F49B; Can you tell me a bit more about what's been going on? I want to make sure I actually understand.";
+  }
+
+  // QUIZ
+  const quizData = [
+    { q:"Omo, it's Sunday evening. What's going through your mind?", opts:["&#x1F630; 'I haven't done anything this weekend. I'm finished.'","&#x1F4F1; 'Let me check what everyone else has been up to...'","&#x1F634; 'My body is tired but my brain won't let me rest.'","&#x1F937; 'I honestly don't know what I'm doing with my life.'"], scores:["academic","social","mental","career"] },
+    { q:"Your friend just got a big achievement. Your first feeling?", opts:["&#x1F60A; Happy for them, but then worried about my own progress.","&#x1F4C9; Immediately compare it to where I am. E pain small.","&#x1F636; Numb. I don't even know what I want anymore.","&#x1F4AA; Motivated! But then anxious about how to catch up."], scores:["academic","social","mental","career"] },
+    { q:"When your parents ask 'what's your plan?', you feel:", opts:["&#x1F624; Frustrated. Like I haven't asked myself that 1000 times.","&#x1F628; Panicked. Because honestly? I don't have one.","&#x1F614; Ashamed. Like something is wrong with me.","&#x1F642; Fine, I have a plan — but it never feels 'good enough.'"], scores:["mental","career","mental","academic"] },
+    { q:"When you open social media, you mostly feel:", opts:["&#x1F629; Behind. Everyone is doing more than me.","&#x1F610; Empty. I scroll but nothing makes me feel better.","&#x1F525; Inspired, but then overwhelmed trying to keep up.","&#x1F602; Entertained! (But I'm avoiding something if I'm honest.)"], scores:["social","mental","career","social"] },
+    { q:"If you could tell yourself one thing right now, it would be:", opts:["&#x1F4D6; 'Just focus. Stop distracting yourself.'","&#x1F6CC; 'Rest. You are allowed to slow down.'","&#x1F4AC; 'Talk to someone. You don't have to carry this alone.'","&#x1F331; 'Your path is yours. Stop comparing chapter 1 to their chapter 10.'"], scores:["academic","mental","mental","social"] }
+  ];
+  const quizResults = {
+    academic:{ title:"&#x1F4DA; You're carrying Academic Pressure", text:"Omo, your brain dey work overtime! Your grades are not your worth. One exam does not define your future. Small wins add up — you've survived every hard day so far. That's a 100% record!" },
+    social:  { title:"&#x1F4F1; You're carrying Comparison Pressure", text:"Abeg, you're watching their highlight reel, not their full story. People only post the wins, not the 2am crying sessions. Your pace is valid. Your journey is uniquely yours. No dulling!" },
+    mental:  { title:"&#x1F9E0; You're carrying Emotional Pressure", text:"You're tired — not just physically, but deep inside. Feeling overwhelmed doesn't mean you're broken, it means you're human. Please talk to someone you trust. Rest without guilt." },
+    career:  { title:"&#x1F31F; You're carrying Life Direction Pressure", text:"Most people who look 'sorted' are winging it too. You don't need a five-year plan at 20. Clarity comes with movement, not waiting to feel 'ready.'" }
+  };
+  let qCurrent=0, qScores={}, qSelected=null;
+  function initQuiz() {
+    qCurrent=0; qScores={academic:0,social:0,mental:0,career:0}; qSelected=null;
+    document.getElementById("quizResult").classList.remove("show");
+    document.getElementById("quizNextBtn").style.display="inline-block";
+    document.getElementById("quizRestartBtn").style.display="none";
+    renderQuiz();
+  }
+  function renderQuiz() {
+    const q = quizData[qCurrent];
+    document.getElementById("quizProgress").textContent = "Question "+(qCurrent+1)+" of "+quizData.length;
+    document.getElementById("quizQuestion").textContent = q.q;
+    document.getElementById("quizResult").classList.remove("show");
+    qSelected = null;
+    const opts = document.getElementById("quizOptions"); opts.innerHTML="";
+    q.opts.forEach((o,i) => {
+      const btn=document.createElement("button"); btn.className="quiz-option"; btn.innerHTML=o;
+      btn.onclick=()=>{ document.querySelectorAll(".quiz-option").forEach(b=>b.classList.remove("selected")); btn.classList.add("selected"); qSelected=q.scores[i]; };
+      opts.appendChild(btn);
+    });
+  }
+  function quizNext() {
+    if (!qSelected) return;
+    qScores[qSelected]++;
+    qCurrent++;
+    if (qCurrent < quizData.length) { renderQuiz(); return; }
+    const top = Object.entries(qScores).sort((a,b)=>b[1]-a[1])[0][0];
+    const res = quizResults[top];
+    document.getElementById("quizProgress").textContent="Done! &#x2705;";
+    document.getElementById("quizQuestion").textContent="Your result is ready! &#x1F389;";
+    document.getElementById("quizOptions").innerHTML="";
+    document.getElementById("quizResultTitle").innerHTML=res.title;
+    document.getElementById("quizResultText").textContent=res.text;
+    document.getElementById("quizResult").classList.add("show");
+    document.getElementById("quizNextBtn").style.display="none";
+    document.getElementById("quizRestartBtn").style.display="inline-block";
+  }
+  function restartQuiz() { initQuiz(); }
+
+  // BOOT
+  window.addEventListener("DOMContentLoaded", () => {
+    const s = store.get("ye_session");
+    if (s) {
+      currentUser = s;
+      document.getElementById("authScreen").classList.remove("active");
+      document.getElementById("appScreen").classList.add("active");
+      initApp();
     }
-
-    function nextQuestion() {
-      if (!selectedScore) { document.getElementById('quiz-question').style.color = 'var(--peach)'; setTimeout(() => document.getElementById('quiz-question').style.color = '', 600); return; }
-      scoreboard[selectedScore]++;
-      current++;
-      current < questions.length ? renderQuestion() : showResult();
-    }
-
-    function showResult() {
-      const top = Object.entries(scoreboard).sort((a,b) => b[1]-a[1])[0][0];
-      const res = results[top];
-      document.getElementById('quiz-options').innerHTML = '';
-      document.getElementById('quiz-question').textContent = "Your result is ready! 🎉";
-      document.getElementById('quiz-progress').textContent = "Done! ✅";
-      document.getElementById('result-title').textContent = res.title;
-      document.getElementById('result-text').textContent = res.text;
-      document.getElementById('quiz-result').classList.add('show');
-      document.getElementById('quiz-next').style.display = 'none';
-      document.getElementById('quiz-restart').style.display = 'inline-block';
-    }
-
-    function restartQuiz() { current = 0; scoreboard = { academic: 0, social: 0, mental: 0, career: 0 }; selectedScore = null; renderQuestion(); }
-
-    renderQuestion();
+  });
   </script>
 </body>
 </html>
