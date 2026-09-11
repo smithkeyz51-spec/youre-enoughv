@@ -292,9 +292,53 @@
       .hero { padding: 5rem 1.5rem 3rem; }
       .pkene-banner { padding: 1.2rem 1.2rem; }
     }
+
+    /* SPLASH SCREEN */
+    .splash {
+      position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(160deg, #E07840, #C05228);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0;
+      transition: opacity 0.7s ease;
+    }
+    .splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-name {
+      font-family: "Fraunces", serif;
+      font-size: 2.6rem;
+      font-weight: 600;
+      color: #FDF6ED;
+      letter-spacing: -0.03em;
+      font-style: italic;
+      animation: splashFade 0.8s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .splash-dot { color: rgba(253,246,237,0.6); }
+    .splash-tagline {
+      font-family: "DM Sans", sans-serif;
+      font-size: 0.82rem;
+      color: rgba(253,246,237,0.6);
+      margin-top: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 400;
+      animation: splashFade 0.8s 0.35s ease both;
+    }
+    @keyframes splashFade {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
+
+  <!-- SPLASH SCREEN -->
+  <div class="splash" id="splash">
+    <p class="splash-name">you're enough<span class="splash-dot">.</span></p>
+    <p class="splash-tagline">A safe space for you</p>
+  </div>
 
   <!-- AUTH SCREEN -->
   <div class="auth-screen active" id="authScreen">
@@ -869,7 +913,19 @@
   });
   </script>
   <script>
-    if ("serviceWorker" in navigator) {
+  
+  // SPLASH
+  window.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      const splash = document.getElementById("splash");
+      if (splash) {
+        splash.classList.add("hide");
+        setTimeout(() => splash.remove(), 650);
+      }
+    }, 2200);
+  });
+
+  if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("/sw.js");
       });
